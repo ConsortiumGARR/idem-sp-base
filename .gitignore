@@ -1,0 +1,31 @@
+.vagrant
+.vscode
+
+# vault
+.vault_pass.txt
+.vault_staging.txt
+.vault_prod.txt
+
+# emacs
+*~
+\#*\#
+
+# vi
+*.swp
+
+# Compiled python modules
+*.pyc
+
+# Tests artifacts
+.cache
+__pycache__
+
+# Python egg
+*.egg-info
+
+# venv
+venv
+
+# staging/production environment
+sp.aai-test.garr.it/
+sp-demo.idem.garr.it/

@@ -1,0 +1,82 @@
+# OCSP Stapling, only in httpd/apache >= 2.3.3
+SSLUseStapling on
+SSLStaplingResponderTimeout 5
+SSLStaplingReturnResponderErrors off
+SSLStaplingCache shmcb:/var/run/ocsp(128000)
+
+ServerName "{{ .Env.SERVER_NAME }}"
+
+<VirtualHost *:80>
+   Redirect permanent "/" "https://{{ .Env.SERVER_NAME }}/"
+   RedirectMatch permanent ^/(.*)$ https://{{ .Env.SERVER_NAME }}/$1
+</VirtualHost>
+
+<IfModule mod_ssl.c>
+   <VirtualHost _default_:443>
+      ServerName {{ .Env.SERVER_NAME }}:443
+      ServerAdmin {{ .Env.SERVER_ADMIN }}
+      # Debian/Ubuntu
+      CustomLog /dev/stdout combined
+      ErrorLog /dev/stderr
+
+      DocumentRoot /var/www/html/{{ .Env.SERVER_NAME }}
+
+      <Location /secure>
+         AuthType shibboleth
+         ShibRequestSetting requireSession 1
+         Require valid-user
+      </Location>
+
+      #Prova di configurazione per MFA
+      <Location /secureMFA>
+         AuthType shibboleth
+         ShibRequestSetting requireSession On
+         <RequireAll>
+            ShibRequestSetting authnContextClassRef https://refeds.org/profile/mfa
+            require authnContextClassRef https://refeds.org/profile/mfa
+            require valid-user
+         </RequireAll>
+      </Location>
+
+      <Directory /var/www/html/{{ .Env.SERVER_NAME }}>
+         Options Indexes FollowSymLinks
+         AllowOverride All
+         Require all granted
+      </Directory>
+
+      SSLEngine On
+      SSLProtocol All -SSLv2 -SSLv3 -TLSv1 -TLSv1.1
+      SSLCipherSuite "EECDH+ECDSA+AESGCM EECDH+aRSA+AESGCM EECDH+ECDSA+SHA384 EECDH+ECDSA+SHA256 EECDH+aRSA+SHA384 EECDH+aRSA+SHA256 EECDH+aRSA+RC4 EECDH EDH+aRSA RC4 !aNULL !eNULL !LOW !3DES !MD5 !EXP !PSK !SRP !DSS !RC4"
+
+      SSLHonorCipherOrder on
+
+      # This will disallow embedding your sp's login page within an iframe.
+      <IfModule headers_module>
+         Header set X-Frame-Options DENY
+         # Enable HTTP Strict Transport Security with a 2 year duration
+         Header always set Strict-Transport-Security "max-age=63072000;includeSubDomains;preload"
+      </IfModule>
+
+      # Abilita Shibboleth per autenticazione federata (Blocco aggiunto per prova MFA)
+      <IfModule mod_shib.c>
+         ShibRequestSetting requireSession 1
+         ShibRequestSetting applicationId default
+      </IfModule>
+
+      # Debian/Ubuntu
+      SSLCertificateFile /etc/letsencrypt/live/{{ .Env.SERVER_NAME }}/fullchain.pem
+      SSLCertificateKeyFile /etc/letsencrypt/live/{{ .Env.SERVER_NAME }}/privkey.pem
+
+      # CA certificate if not included in SSLCertificateFile
+      #SSLCACertificateFile /etc/ssl/certs/{{ .Env.CA_CERT_NAME }}.pem
+
+      # Inoltro delle variabili di Shibboleth a PHP
+      SetEnvIf Shib-Session-Index (.*) SHIB_SESSION_INDEX=$1
+      SetEnvIf Shib-Identity-Provider (.*) SHIB_IDENTITY_PROVIDER=$1
+      SetEnvIf Shib-AuthnContext-Class (.*) SHIB_AUTHN_CONTEXT=$1
+
+      # Redirect needed to retrieve SP Metadata from its entityID
+      Redirect "/shibboleth" "/Shibboleth.sso/Metadata"
+
+   </VirtualHost>
+</IfModule>
