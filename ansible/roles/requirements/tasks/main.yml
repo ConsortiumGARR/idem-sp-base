@@ -1,0 +1,28 @@
+---
+# requirements role tasks
+
+- name: "Update cache & Full system update"
+  ansible.builtin.apt:
+    upgrade: dist
+    update_cache: true
+    cache_valid_time: 3600
+    force_apt_get: true
+  tags: [never]
+
+- name: Install cron, fail2ban & rsyslog
+  ansible.builtin.apt:
+    name: [cron, fail2ban, rsyslog]
+    state: present
+    install-recommends: false
+    update_cache: true
+    cache_valid_time: 3600
+    force_apt_get: true
+
+- name: Make sure that cron & fail2ban is running
+  ansible.builtin.systemd_service:
+    state: started
+    name: "{{ item }}"
+  loop:
+    - cron
+    - fail2ban
+    - rsyslog

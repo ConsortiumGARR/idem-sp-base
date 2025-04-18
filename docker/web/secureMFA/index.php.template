@@ -30,7 +30,7 @@ foreach ($_SERVER as $key => $value) {
             border-radius: 10px;
         }
         .navbar {
-        background-color: #000;
+        background-color: #2b3145;
         }
         .navbar-brand, .nav-link {
         color: white !important;

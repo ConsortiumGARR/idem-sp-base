@@ -1,0 +1,18 @@
+services:
+    idem-sp:
+        image: gitlab.dir.garr.it:4567/idem/{{ docker_image_name }}:{{ version_idem_sp }}
+        container_name: idem-sp-{{ location }}
+        hostname: idem-sp
+        env_file:
+            - ".env"
+        ports:
+            - "{{ http_port }}:80"
+            - "{{ https_port }}:443"
+        volumes:
+            - "/srv/idem-certbot:/etc/letsencrypt"
+        logging:
+            driver: syslog
+            options:
+                syslog-address: "udp://{{ node_ip_priv }}:514"
+                tag: "{{ '{{' }} .Name {{ '}}' }}"
+        restart: unless-stopped

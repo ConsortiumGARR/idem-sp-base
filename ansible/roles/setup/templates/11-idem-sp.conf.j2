@@ -1,0 +1,60 @@
+# http://www.rsyslog.com/doc/v8-stable/configuration/properties.html
+# http://www.rsyslog.com/doc/v8-stable/configuration/templates.html
+
+# Templates for other.log
+template(name="DockerOtherLogsPath" type="list") {
+    constant(value="/opt/docker-logs/")
+    property(name="programname")
+    constant(value="/")
+    constant(value="other.log")
+}
+
+template(name="extractOther" type="list"){
+   property(name="timereported" position.from="1" position.to="19" dateFormat="rfc3339")
+   constant(value=" ")
+   property(name="msg" droplastlf="on" position.from="2" position.to="-1")
+   constant(value="\n")
+}
+
+# Template to extract MSG only
+template(name="extractMsgOnly" type="list"){
+   property(name="msg" droplastlf="on" position.from="2" position.to="-1")
+   constant(value="\n")
+}
+
+# NGINX Access Log PATH
+template(name="DockerNginxAccessLogsPath" type="list") {
+    constant(value="/opt/docker-logs/")
+    property(name="programname")
+    constant(value="/")
+    constant(value="nginx-access.log")
+}
+
+# NGINX Error Log PATH
+template(name="DockerNginxErrorLogsPath" type="list") {
+    constant(value="/opt/docker-logs/")
+    property(name="programname")
+    constant(value="/")
+    constant(value="nginx-error.log")
+}
+
+# define new ruleset and add rules to it
+# http://www.rsyslog.com/doc/v8-stable/configuration/modules/omfile.html
+ruleset(name="remoteDockerContainersIdemConf") {
+   if ( $programname contains "idem-conf" ) then {
+      if ( $msg contains "[error]") then {
+         action(type="omfile" dynaFile="DockerNginxErrorLogsPath" template="extractMsgOnly")
+      }
+      else if ( $msg contains "{{ fqdn }}") then {
+         action(type="omfile" dynaFile="DockerNginxAccessLogsPath" template="extractMsgOnly")
+      }
+      else {
+         action(type="omfile" dynaFile="DockerOtherLogsPath" template="extractOther")
+      }
+   }
+   else {
+      action(type="omfile" dynaFile="DockerOtherLogsPath" template="extractOther")
+   }
+}
+
+input(type="imudp" port="514" ruleset="remoteDockerContainersIdemConf")

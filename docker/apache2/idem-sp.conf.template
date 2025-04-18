@@ -19,7 +19,7 @@ ServerName "{{ .Env.SERVER_NAME }}"
       CustomLog /dev/stdout combined
       ErrorLog /dev/stderr
 
-      DocumentRoot /var/www/html/{{ .Env.SERVER_NAME }}
+      DocumentRoot /var/www/html/sp
 
       <Location /secure>
          AuthType shibboleth
@@ -38,7 +38,7 @@ ServerName "{{ .Env.SERVER_NAME }}"
          </RequireAll>
       </Location>
 
-      <Directory /var/www/html/{{ .Env.SERVER_NAME }}>
+      <Directory /var/www/html/sp>
          Options Indexes FollowSymLinks
          AllowOverride All
          Require all granted
