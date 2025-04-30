@@ -21,10 +21,10 @@ else
     echo "[INFO] Template shibboleth2.xml.template not found, skipping gomplate processing."
 fi
 
-if [ -f "/tmp/index.html.template" ]; then
+if [ -f "/var/www/html/sp/index.html.template" ]; then
     echo "[INFO] Template index.html.template found, processing with gomplate..."
-    gomplate -f /tmp/index.html.template -o /var/www/html/sp/index.html
-    rm /tmp/index.html.template
+    gomplate -f /var/www/html/sp/index.html.template -o /var/www/html/sp/index.html
+    rm /var/www/html/sp/index.html.template
     echo "[OK] Template index.html.template processed and removed."
 else
     echo "[INFO] Template index.html.template not found, skipping gomplate processing."
@@ -79,37 +79,44 @@ if [ ${EDS_ENABLED} ]; then
     tar xzf shibboleth-eds.tar.gz
     cd shibboleth-embedded-ds-1.3.0
     apt-get update
-    apt-get install make
+    apt-get install -y make
     make install
     mv /etc/shibboleth-ds/shibboleth-ds.conf /etc/apache2/conf-available/shibboleth-ds.conf
     a2enconf shibboleth-ds.conf
     ESCAPED_SERVER_NAME=$(printf '%s' "${SERVER_NAME}" | sed -e 's/\//\\\//g' -e 's/\./\\./g')
     export ESCAPED_SERVER_NAME
-    gomplate -f /tmp/idpselect_config.js.template -o /etc/shibboleth-ds/idpselect_config.js
-    rm /tmp/idpselect_config.js.template
-    echo "[OK] Template idpselect_config.template processed and removed."
-    gomplate -f /tmp/index.html.template -o /etc/shibboleth-ds/index.html
-    rm /tmp/index.html.template
-    echo "[OK] Template index.html.template processed and removed."
+    gomplate -f /var/www/html/sp/eds/idpselect_config.js.template -o /etc/shibboleth-ds/idpselect_config.js
+    echo "[OK] EDS Template idpselect_config.template processed."
+    gomplate -f /var/www/html/sp/eds/index.html.template -o /etc/shibboleth-ds/index.html
+    echo "[OK] EDS Template index.html.template processed."
+    rm -rf /var/www/html/sp/eds
+    echo "[OK] EDS Templates removed."
+
 
     if [ -n ${MDX_FED_TYPE} ]; then
         mkdir /opt/idem_jwt_to_json
         # si potrebbe cambiare questa wget tenendo un semplice file statico?
         wget "https://mdx.idem.garr.it/idem-mdx-service-pubkey.pem" -O /opt/idem_jwt_to_json/idem-mdx-service-pubkey.pem
-        apt-get install python3-jwt python3-requests python3-pem
+        apt-get install -y python3-jwt python3-requests python3-pem cron
+        apt-get clean
+        rm -rf /var/lib/apt/lists/*
         wget https://mdx.idem.garr.it/decodeToken.py -O /opt/idem_jwt_to_json/decodeToken.py
         chmod +x /opt/idem_jwt_to_json/decodeToken.py
+        mv /etc/supervisor/supervisord-eds.conf /etc/supervisor/supervisord.conf
 
         if [ ${MDX_FED_TYPE} == "idem-test" ]; then
             echo "*/30 * * * *   /opt/idem_jwt_to_json/decodeToken.py -j https://mdx.idem.garr.it/idem-test-token -o /var/www/html/sp/feed-eds.json -k /opt/idem_jwt_to_json/idem-mdx-service-pubkey.pem > /opt/idem_jwt_to_json/jwt_to_json.log 2>&1" > /etc/cron.d/eds-refresh
+            /opt/idem_jwt_to_json/decodeToken.py -j https://mdx.idem.garr.it/idem-test-token -o /var/www/html/sp/feed-eds.json -k /opt/idem_jwt_to_json/idem-mdx-service-pubkey.pem > /opt/idem_jwt_to_json/jwt_to_json.log 2>&1
         elif [ ${MDX_FED_TYPE} == "edugain" ]; then
             echo "*/30 * * * *   /opt/idem_jwt_to_json/decodeToken.py -j https://mdx.idem.garr.it/edugain2idem-token -o /var/www/html/sp/feed-eds.json -k /opt/idem_jwt_to_json/idem-mdx-service-pubkey.pem > /opt/idem_jwt_to_json/jwt_to_json.log 2>&1" > /etc/cron.d/eds-refresh
+            /opt/idem_jwt_to_json/decodeToken.py -j https://mdx.idem.garr.it/edugain2idem-token -o /var/www/html/sp/feed-eds.json -k /opt/idem_jwt_to_json/idem-mdx-service-pubkey.pem > /opt/idem_jwt_to_json/jwt_to_json.log 2>&1
         elif [ ${MDX_FED_TYPE} == "idem" ]; then
             echo "*/30 * * * *   /opt/idem_jwt_to_json/decodeToken.py -j https://mdx.idem.garr.it/idem-token -o /var/www/html/sp/feed-eds.json -k /opt/idem_jwt_to_json/idem-mdx-service-pubkey.pem > /opt/idem_jwt_to_json/jwt_to_json.log 2>&1" > /etc/cron.d/eds-refresh
+            /opt/idem_jwt_to_json/decodeToken.py -j https://mdx.idem.garr.it/idem-token -o /var/www/html/sp/feed-eds.json -k /opt/idem_jwt_to_json/idem-mdx-service-pubkey.pem > /opt/idem_jwt_to_json/jwt_to_json.log 2>&1
         fi
     fi
 else
-    rm /tmp/idpselect_config.js.template /tmp/index.html.template
+    rm -rf /var/www/html/sp/eds
 fi
 
 # Give to the certs the right permissions

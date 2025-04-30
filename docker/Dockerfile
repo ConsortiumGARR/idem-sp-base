@@ -4,6 +4,7 @@ COPY --from=hairyhenderson/gomplate:v4.3.2 /gomplate /bin/gomplate
 
 # Installing required packages
 RUN apt-get update && apt-get install -y \
+    apt-utils \
     wget \
     ca-certificates \
     nano \
@@ -14,7 +15,7 @@ RUN apt-get update && apt-get install -y \
     ntp \
     libapache2-mod-php \
     php \
-    supervisor --no-install-recommends \
+    supervisor --no-install-recommends --no-install-suggests \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
@@ -22,7 +23,6 @@ RUN apt-get update && apt-get install -y \
 RUN mkdir -p /var/www/html/sp 
 RUN chown -R www-data:www-data /var/www/html/sp
 COPY --chown=www-data:www-data sp-base/docker/web /var/www/html/sp
-COPY --chown=www-data:www-data sp-base/docker/web/index.html.template /tmp/index.html.template
 
 # APACHE
 COPY --chown=www-data:www-data sp-base/docker/apache2/idem-sp.conf.template /tmp/idem-sp.conf.template
@@ -33,12 +33,8 @@ RUN chown -R _shibd:_shibd /var/run/shibboleth
 COPY sp-base/docker/shibboleth/attribute-map.xml /etc/shibboleth/attribute-map.xml
 COPY sp-base/docker/shibboleth/shibboleth2.xml.template /tmp/shibboleth2.xml.template
 
-# EDS
-COPY sp-base/docker/web/eds/idpselect_config.js.template /tmp/idpselect_config.js.template
-COPY sp-base/docker/web/eds/index.html.template /tmp/index.html.template
-
 # SUPERVISOR
-COPY sp-base/docker/supervisor/supervisord.conf /etc/supervisor/supervisord.conf
+COPY sp-base/docker/supervisor/ /etc/supervisor/
 RUN mkdir -p /var/log/supervisor/ \
     && mkdir -p /var/run/supervisord
 RUN chmod -R 0755 /var/log/supervisor
