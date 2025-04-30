@@ -110,7 +110,7 @@
 
           <!-- Privacy Policy -->
           <div class="mt-5">
-            <p class="text-start">See the <a href="https://{{ .Env.SERVER_NAME }}/shibboleth-ds/privacy.html">Privacy Statement</a> for the service.</p>
+            <p class="text-start">See the <a href="https://{{ .Env.SERVER_NAME }}/privacy.html">Privacy Statement</a> for the service.</p>
             <p class="mb-0">
               Need assistance? Contact us: 
               <a href="mailto:idem-help@garr.it">idem-help@garr.it</a>
@@ -129,14 +129,14 @@
         <!-- Immagine a sinistra -->
           <div class="col-md-4 text-center text-md-start">
             <a href="https://www.garr.it/it/">
-              <img src="./assets/logo-garr.png" class="img-fluid" style="max-height: 50px;">
+              <img src="/assets/organization_white.png" class="img-fluid" style="max-height: 50px;">
             </a>
           </div>
 
         {{ if eq .Env.FEDERATION_TYPE "IDEM and eduGAIN" }}
           <div class="col-md-4 text-center" id="edugain-logo-container">
             <a href="https://edugain.org/">
-              <img id="edugain-logo" src="./assets/EduGAIN_bianco.png" class="img-fluid" style="max-height: 150px;">
+              <img id="edugain-logo" src="/assets/edugain_white.png" class="img-fluid" style="max-height: 150px;">
             </a>
           </div>
         {{ else if eq .Env.FEDERATION_TYPE "IDEM Test" }}
@@ -147,7 +147,7 @@
           <!-- Immagine a destra -->
           <div class="col-md-4 text-center text-md-end">
             <a href="https://www.idem.garr.it/">
-              <img src="./assets/logoIDEM_bianco.png" class="img-fluid" style="max-height: 50px;">
+              <img src="/assets/idem_white.png" class="img-fluid" style="max-height: 50px;">
             </a>
           </div>
         </div>

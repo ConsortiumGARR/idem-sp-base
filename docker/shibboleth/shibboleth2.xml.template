@@ -35,12 +35,19 @@
             -->
             
             <!-- WAYF or direct EntityID -->
-            {{- if .Env.WAYF_URL }}
-              <SSO discoveryProtocol="SAMLDS" discoveryURL="{{ .Env.WAYF_URL }}">
+            {{- if .Env.REMOTE_IDP_ENTITY_ID }}
+              <!-- Direct IdP Connection -->
+              <SSO entityID="{{ .Env.REMOTE_IDP_ENTITY_ID }}">
                 SAML2
               </SSO>
-            {{- else if .Env.REMOTE_IDP_ENTITY_ID }}
-              <SSO entityID="{{ .Env.REMOTE_IDP_ENTITY_ID }}">
+            {{- else if .Env.EDS_ENABLED }}
+              <!-- Embedded Discovery Service -->
+              <SSO discoveryProtocol="SAMLDS" discoveryURL="https://{{ .Env.SERVER_NAME }}/shibboleth-ds/index.html">
+                SAML2
+              </SSO>
+            {{- else if .Env.WAYF_URL }}
+              <!-- Central Discovery Service - WAYF -->
+              <SSO discoveryProtocol="SAMLDS" discoveryURL="{{ .Env.WAYF_URL }}">
                 SAML2
               </SSO>
             {{- end }}
@@ -77,10 +84,13 @@
             helpLocation="/about.html"
             styleSheet="/shibboleth-sp/main.css"/>
 
+  <!-- Questi esempi si potrebbero rimuovere, perché già presenti in 
+  /etc/shibboleth/example-shibboleth2.xml -->
+
         <!-- Example of locally maintained metadata. -->
-
-        <MetadataProvider type="XML" validate="true" path="sp-metadata.xml"/>
-
+        <!-- 
+        <MetadataProvider type="XML" validate="true" path="partner-metadata.xml"/>
+        -->
 
         <!-- Example of remotely supplied batch of signed metadata. -->
         <!--
@@ -104,6 +114,7 @@
             <MetadataFilter type="Signature" certificate="mdqsigner.pem" />
         </MetadataProvider>
         -->
+    <!-- Fino a qui -->
 
         {{- if .Env.MDX_FED_TYPE }}
           <!-- MDX Service -->

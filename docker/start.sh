@@ -73,6 +73,45 @@ else
     echo "[OK] Certs present. Keys assumed present or previously decrypted."
 fi
 
+if [ ${EDS_ENABLED} ]; then
+    cd /usr/local/src
+    wget https://shibboleth.net/downloads/embedded-discovery-service/latest/shibboleth-embedded-ds-1.3.0.tar.gz -O shibboleth-eds.tar.gz
+    tar xzf shibboleth-eds.tar.gz
+    cd shibboleth-embedded-ds-1.3.0
+    apt-get update
+    apt-get install make
+    make install
+    mv /etc/shibboleth-ds/shibboleth-ds.conf /etc/apache2/conf-available/shibboleth-ds.conf
+    a2enconf shibboleth-ds.conf
+    ESCAPED_SERVER_NAME=$(printf '%s' "${SERVER_NAME}" | sed -e 's/\//\\\//g' -e 's/\./\\./g')
+    export ESCAPED_SERVER_NAME
+    gomplate -f /tmp/idpselect_config.js.template -o /etc/shibboleth-ds/idpselect_config.js
+    rm /tmp/idpselect_config.js.template
+    echo "[OK] Template idpselect_config.template processed and removed."
+    gomplate -f /tmp/index.html.template -o /etc/shibboleth-ds/index.html
+    rm /tmp/index.html.template
+    echo "[OK] Template index.html.template processed and removed."
+
+    if [ -n ${MDX_FED_TYPE} ]; then
+        mkdir /opt/idem_jwt_to_json
+        # si potrebbe cambiare questa wget tenendo un semplice file statico?
+        wget "https://mdx.idem.garr.it/idem-mdx-service-pubkey.pem" -O /opt/idem_jwt_to_json/idem-mdx-service-pubkey.pem
+        apt-get install python3-jwt python3-requests python3-pem
+        wget https://mdx.idem.garr.it/decodeToken.py -O /opt/idem_jwt_to_json/decodeToken.py
+        chmod +x /opt/idem_jwt_to_json/decodeToken.py
+
+        if [ ${MDX_FED_TYPE} == "idem-test" ]; then
+            echo "*/30 * * * *   /opt/idem_jwt_to_json/decodeToken.py -j https://mdx.idem.garr.it/idem-test-token -o /var/www/html/sp/feed-eds.json -k /opt/idem_jwt_to_json/idem-mdx-service-pubkey.pem > /opt/idem_jwt_to_json/jwt_to_json.log 2>&1" > /etc/cron.d/eds-refresh
+        elif [ ${MDX_FED_TYPE} == "edugain" ]; then
+            echo "*/30 * * * *   /opt/idem_jwt_to_json/decodeToken.py -j https://mdx.idem.garr.it/edugain2idem-token -o /var/www/html/sp/feed-eds.json -k /opt/idem_jwt_to_json/idem-mdx-service-pubkey.pem > /opt/idem_jwt_to_json/jwt_to_json.log 2>&1" > /etc/cron.d/eds-refresh
+        elif [ ${MDX_FED_TYPE} == "idem" ]; then
+            echo "*/30 * * * *   /opt/idem_jwt_to_json/decodeToken.py -j https://mdx.idem.garr.it/idem-token -o /var/www/html/sp/feed-eds.json -k /opt/idem_jwt_to_json/idem-mdx-service-pubkey.pem > /opt/idem_jwt_to_json/jwt_to_json.log 2>&1" > /etc/cron.d/eds-refresh
+        fi
+    fi
+else
+    rm /tmp/idpselect_config.js.template /tmp/index.html.template
+fi
+
 # Give to the certs the right permissions
 chown www-data:www-data -R "/etc/letsencrypt/live/${SERVER_NAME}"
 chmod 600 "/etc/letsencrypt/live/${SERVER_NAME}/privkey.pem"

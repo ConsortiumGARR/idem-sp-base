@@ -33,6 +33,10 @@ RUN chown -R _shibd:_shibd /var/run/shibboleth
 COPY sp-base/docker/shibboleth/attribute-map.xml /etc/shibboleth/attribute-map.xml
 COPY sp-base/docker/shibboleth/shibboleth2.xml.template /tmp/shibboleth2.xml.template
 
+# EDS
+COPY sp-base/docker/web/eds/idpselect_config.js.template /tmp/idpselect_config.js.template
+COPY sp-base/docker/web/eds/index.html.template /tmp/index.html.template
+
 # SUPERVISOR
 COPY sp-base/docker/supervisor/supervisord.conf /etc/supervisor/supervisord.conf
 RUN mkdir -p /var/log/supervisor/ \
@@ -44,7 +48,6 @@ EXPOSE 443
 
 COPY sp-base/docker/start.sh /usr/local/bin/start.sh
 RUN chmod +x /usr/local/bin/start.sh
-
 
 ### Start example stage building
 FROM builder AS example
