@@ -1,0 +1,49 @@
+<?php include('/var/www/html/sp/shared/header.html'); ?>
+
+<!-- Contenuto -->
+<main class="flex-grow-1 d-flex align-items-center">
+  <div class="container my-5">
+    <div class="row justify-content-center">
+      <div class="col-md-8">
+
+        <!-- Testo Introduttivo -->
+        <div class="mb-4">
+          <h2 class="garr-text-warning">Welcome to SP DEMO!</h2>
+          <p class="text-start">
+            This is a test Service Provider designed for IdP administrators to verify attribute release within the {{ .Env.FEDERATION_TYPE }} federations.
+            It displays a summary HTML page showing the attributes sent by the IdP in the current session.
+          </p>
+          <p class="text-start">
+            Please note: this service is intended for participants of the {{ .Env.FEDERATION_TYPE }} federations only.
+          </p>
+        </div>
+
+        <br>
+        <!-- Card DS -->
+        <div class="d-flex justify-content-center">
+          <div class="card shadow-lg p-4 mb-3 rounded-4" style="max-width: 500px; background: #f8f9fa;">
+            <div class="card-body">
+              <h4 class="mb-3 fw-bold text-center garr-text-warning">Select Login Type</h4>
+              <p class="text-muted">
+                To test the desired IdPs select the login methodology by pressing the appropriate button below.
+              </p>
+              <p class="text-muted">
+                Only IdPs that support <strong>Multi-Factor Authentication (MFA)</strong> will be selectable for the MFA login option.
+              </p>
+              <div class="text-center d-grid gap-3 mt-4">
+                <button class="btn btn-primary btn-lg shadow-sm" onclick="window.location.href='https://{{ .Env.SERVER_NAME }}/secure'">Login</button>
+                <button class="btn btn-success btn-lg shadow-sm" onclick="window.location.href='https://{{ .Env.SERVER_NAME }}/secureMFA'">Login with MFA</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</main>
+
+<?php include('/var/www/html/sp/shared/footer.html'); ?>  
+
+</body>
+</html>

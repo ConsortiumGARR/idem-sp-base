@@ -4,6 +4,10 @@ SSLStaplingResponderTimeout 5
 SSLStaplingReturnResponderErrors off
 SSLStaplingCache shmcb:/var/run/ocsp(128000)
 
+# Remove signature and tokens
+ServerSignature Off
+ServerTokens Prod
+
 ServerName "{{ .Env.SERVER_NAME }}"
 
 <VirtualHost *:80>
@@ -15,13 +19,14 @@ ServerName "{{ .Env.SERVER_NAME }}"
    <VirtualHost _default_:443>
       ServerName {{ .Env.SERVER_NAME }}:443
       ServerAdmin {{ .Env.SERVER_ADMIN }}
-      # Debian/Ubuntu
-      CustomLog /dev/stdout combined
-      ErrorLog /dev/stderr
+      
+      CustomLog "|/usr/bin/logger -t [apache_access] -p local1.info" combined
+      ErrorLog "|/usr/bin/logger -t [apache_error] -p local1.err"
 
       DocumentRoot /var/www/html/sp
 
       <Location /secure>
+         Options Indexes FollowSymLinks
          AuthType shibboleth
          ShibRequestSetting requireSession 1
          Require valid-user
@@ -29,6 +34,7 @@ ServerName "{{ .Env.SERVER_NAME }}"
 
       #Prova di configurazione per MFA
       <Location /secureMFA>
+         Options Indexes FollowSymLinks
          AuthType shibboleth
          ShibRequestSetting requireSession On
          <RequireAll>
@@ -77,6 +83,16 @@ ServerName "{{ .Env.SERVER_NAME }}"
 
       # Redirect needed to retrieve SP Metadata from its entityID
       Redirect "/shibboleth" "/Shibboleth.sso/Metadata"
+
+
+   {{- if .Env.EDS_ENABLED }}
+      Alias /shibboleth-ds /etc/shibboleth-ds
+      <Directory "/etc/shibboleth-ds">
+         Options Indexes FollowSymLinks
+         AllowOverride None
+         Require all granted
+      </Directory>
+   {{- end }}
 
    </VirtualHost>
 </IfModule>

@@ -42,7 +42,7 @@
               </SSO>
             {{- else if .Env.EDS_ENABLED }}
               <!-- Embedded Discovery Service -->
-              <SSO discoveryProtocol="SAMLDS" discoveryURL="https://{{ .Env.SERVER_NAME }}/shibboleth-ds/index.html">
+              <SSO discoveryProtocol="SAMLDS" discoveryURL="https://{{ .Env.SERVER_NAME }}/shibboleth-ds/index.php">
                 SAML2
               </SSO>
             {{- else if .Env.WAYF_URL }}

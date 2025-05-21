@@ -6,32 +6,44 @@ COPY --from=hairyhenderson/gomplate:v4.3.2 /gomplate /bin/gomplate
 RUN apt-get update && apt-get install -y \
     apt-utils \
     wget \
+    vim \
     ca-certificates \
-    nano \
+    cron \
     openssl \
     gettext \
+    gzip \
     libapache2-mod-shib \
     apache2 \
+    make \
     ntp \
     libapache2-mod-php \
     php \
+    python3-cryptography \
+    python3-jwt \
+    python3-requests \
+    python3-pem \
+    rsyslog \
     supervisor --no-install-recommends --no-install-suggests \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
 # Creating document root - 'site' folder is the default
-RUN mkdir -p /var/www/html/sp 
+RUN mkdir -p /var/www/html/sp /var/www/html/sp/secure /var/www/html/sp/secureMFA
 RUN chown -R www-data:www-data /var/www/html/sp
 COPY --chown=www-data:www-data sp-base/docker/web /var/www/html/sp
 
 # APACHE
-COPY --chown=www-data:www-data sp-base/docker/apache2/idem-sp.conf.template /tmp/idem-sp.conf.template
+COPY --chown=www-data:www-data sp-base/docker/apache2/idem-sp.conf.template /etc/apache2/sites-available/idem-sp.conf.template
 
 # SHIBBOLETH
 RUN mkdir -p /var/run/shibboleth
-RUN chown -R _shibd:_shibd /var/run/shibboleth
 COPY sp-base/docker/shibboleth/attribute-map.xml /etc/shibboleth/attribute-map.xml
-COPY sp-base/docker/shibboleth/shibboleth2.xml.template /tmp/shibboleth2.xml.template
+COPY sp-base/docker/shibboleth/shibboleth2.xml.template /etc/shibboleth/shibboleth2.xml.template
+COPY sp-base/docker/shibboleth/shibd.logger /etc/shibboleth/shibd.logger
+RUN chown -R _shibd:_shibd /var/run/shibboleth /etc/shibboleth 
+
+# RSYSLOG
+COPY sp-base/docker/rsyslog/rsyslog.conf /etc/rsyslog.conf
 
 # SUPERVISOR
 COPY sp-base/docker/supervisor/ /etc/supervisor/
@@ -45,6 +57,7 @@ EXPOSE 443
 COPY sp-base/docker/start.sh /usr/local/bin/start.sh
 RUN chmod +x /usr/local/bin/start.sh
 
+
 ### Start example stage building
 FROM builder AS example
 
@@ -52,7 +65,7 @@ CMD ["/usr/local/bin/start.sh"]
 
 
 ### Start idem SP stage building
-FROM builder AS idem
+FROM builder AS idem_no_eds
 
 ARG SP_CERT_PATH
 
@@ -61,5 +74,31 @@ COPY ${SP_CERT_PATH}/ /etc/shibboleth/
 
 # Retrieving Federation Certificate for MDX
 RUN wget https://mdx.idem.garr.it/idem-mdx-service-crt.pem -O /etc/shibboleth/idem-mdx-service-crt.pem
+
+CMD ["/usr/local/bin/start.sh"]
+
+
+### Start idem SP stage building with EDS
+FROM builder AS idem_with_eds
+
+ARG SP_CERT_PATH
+
+# Copy the SP signing/encryption certificates
+COPY ${SP_CERT_PATH}/ /etc/shibboleth/
+
+# Retrieving Federation Certificate for MDX
+RUN wget https://mdx.idem.garr.it/idem-mdx-service-crt.pem -O /etc/shibboleth/idem-mdx-service-crt.pem
+
+# EMBEDDED DISCOVERY SERVICE
+
+RUN wget https://shibboleth.net/downloads/embedded-discovery-service/latest/shibboleth-embedded-ds-1.3.0.tar.gz -O /usr/local/src/shibboleth-eds.tar.gz \
+    && cd /usr/local/src/ \
+    && tar xzf shibboleth-eds.tar.gz \
+    && cd shibboleth-embedded-ds-1.3.0 \
+    && make install
+
+COPY sp-base/docker/shibboleth-eds/idem_jwt_to_json /opt/idem_jwt_to_json/
+COPY sp-base/docker/shibboleth-eds/config/ /etc/shibboleth-ds/
+RUN chmod +x /opt/idem_jwt_to_json/decodeToken.py
 
 CMD ["/usr/local/bin/start.sh"]

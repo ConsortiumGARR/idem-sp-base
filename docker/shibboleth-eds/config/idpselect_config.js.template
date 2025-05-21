@@ -57,15 +57,15 @@ function IdPSelectUIParms(){
         'fatal.noparms' : 'No parameters to discovery session and no defaultReturn parameter configured',
         'fatal.noReturnURL' : "No URL return parameter provided",
         'fatal.badProtocol' : "Return request must start with https:// or http://",
-        'idpPreferred.label': 'Select your Organization:',
-        'idpEntry.label': 'Or enter your organization\'s name:',
+        'idpPreferred.label': 'Select one of the previously used organization:',
+        'idpEntry.label': 'Enter your organization\'s name:',
         'idpEntry.NoPreferred.label': 'Enter your organization\'s name:',
-        'idpList.label': 'Or select your organization from the list:',
+        'idpList.label': 'Select your organization',
         'idpList.NoPreferred.label': 'Select your organization',
         'idpList.defaultOptionLabel': 'Please select your organization...',
         'idpList.showList' : 'Show organizations list',
         'idpList.showSearch' : 'Digit your organization',
-        'submitButton.label': 'Go',
+        'submitButton.label': 'Confirm',
         'helpText': 'Help',
         'defaultLogoAlt' : 'DefaultLogo'
     }
@@ -85,9 +85,3 @@ function IdPSelectUIParms(){
     this.maxHeight = 69;
     this.bestRatio = Math.log(80 / 60);
 }
-
-
-
-
-
-

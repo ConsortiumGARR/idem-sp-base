@@ -1,0 +1,23 @@
+<!-- Footer -->
+<footer class="garr-bar text-white text-center p-3 mt-auto">
+  <div class="container">
+    <div class="row justify-content-between">
+      <div class="col-md-4">
+        <h5 class="garr-text-warning">Privacy</h5>
+        <ul class="list-unstyled">
+          <li><a href="https://{{ .Env.SERVER_NAME }}/privacy.html" style="color: #ffffff">Privacy policy</a></li>
+        </ul>
+      </div>
+      <div class="col-md-4">
+        <h5 class="garr-text-warning">Contacts</h5>
+        <ul class="list-unstyled">
+          <li>Email: <a href="mailto:idem-help@garr.it" class="garr-text-warning">idem-help@garr.it</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- Bootstrap JS -->
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>

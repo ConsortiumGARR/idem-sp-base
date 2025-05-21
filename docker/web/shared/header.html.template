@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Example PHP Federated Application</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom Styles -->
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .card {
+            max-width: 500px;
+            width: 500px;
+            border-radius: 10px;
+        }
+        .garr-bar {
+            background-color: #2b3145 !important;
+        }
+        .text-white {
+            color: white !important;
+        }
+        .garr-text-warning {
+            color: #ffad45 !important;
+        }
+        .cell {
+            max-width: 100%;
+            word-break: break-all;
+        }
+        .menu-text:hover{
+            color: #2b3145 !important;
+        }
+        .menu-text {
+            font-weight: bold;
+        }
+    {{- if .Env.EDS_ENABLED }}
+        #idpSelect form {
+            max-width: 500px;
+            margin: auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            border: 1px solid #ccc;
+            font-family: sans-serif;
+        }
+        #idpSelect label,
+        #idpSelect select,
+        #idpSelect input {
+            display: block;
+            width: 100%;
+            margin-bottom: 15px;
+            font-size: 1rem;
+        }
+        #idpSelect select,
+        #idpSelect input[type="text"] {
+            padding: 8px;
+            border-radius: 4px;
+            border: 1px solid #aaa;
+        }
+        #idpSelect input[type="submit"] {
+            background-color: #198754;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        #idpSelect input[type="submit"]:hover {
+            background-color: #157347;
+        }
+        #idpSelectIdPSelector {
+            width: auto;
+            text-align: center;
+            margin-top: 20px;
+        }
+        a.IdPSelectDropDownToggle {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #0d6efd;
+            color: #fff !important;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none !important;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-top: 20px;
+            text-align: center;
+        }
+        a.IdPSelectDropDownToggle:hover {
+            background-color: #0b5ed7;
+            text-decoration: none !important;
+        }
+        ul.IdPSelectDropDown {
+            position: absolute;
+            margin-top: 5px;
+            padding: 0;
+            list-style: none;
+            background: white;
+            border: 1px solid #ccc;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 1000;
+        }
+        ul.IdPSelectDropDown li {
+            padding: 8px 12px;
+            cursor: pointer;
+        }
+        ul.IdPSelectDropDown li:hover {
+            background-color: #f0f0f0;
+        }
+        a.IdPSelectHelpButton {
+            display: none;
+        }
+        div.IdPSelectTextDiv {
+            height: auto;
+            padding: 10px;
+            font-size: inherit;
+            clear: inherit;
+        }
+        div.IdPSelectPreferredIdPImg {
+            display: none !important;
+        }
+    {{- end }}
+    </style>
+</head>
+<body class="d-flex flex-column min-vh-100">
+
+<!-- Navbar -->
+<nav class="garr-bar p-3 mt-auto">
+    {{ if or (eq .Env.FEDERATION_TYPE "IDEM and eduGAIN") (eq .Env.FEDERATION_TYPE "IDEM Test") }}
+    <div class="container d-flex justify-content-between align-items-center">
+        <a href="https://www.garr.it/it/">
+            <img src="/assets/organization_white.png" class="img-fluid" style="max-height: 50px;">
+        </a>
+    
+        {{ if eq .Env.FEDERATION_TYPE "IDEM and eduGAIN" }}
+        <a href="https://edugain.org/">
+            <img src="/assets/edugain_white.png" class="img-fluid" style="max-height: 150px;">
+        </a>
+        {{ else if eq .Env.FEDERATION_TYPE "IDEM Test" }}
+        <div style="flex:1; text-align: center;"></div>
+        {{ end }}
+
+        <a href="https://www.idem.garr.it/">
+            <img src="/assets/idem_white.png" class="img-fluid" style="max-height: 50px;">
+        </a>
+    </div>
+    {{ end }} 
+</nav>
+
+<!-- Submenu -->
+<div class="bg-light py-2">
+  <div class="container">
+    <ul class="nav">
+      <li class="nav-item">
+        <a class="nav-link menu-text garr-text-warning" href="https://{{ .Env.SERVER_NAME }}/">Home</a>
+      </li>
+      <li class="nav-item dropdown">
+        <a class="nav-link menu-text garr-text-warning dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+          Useful Links
+        </a>
+        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+          <li><a class="dropdown-item menu-text garr-text-warning" 
+            href="https://github.com/ConsortiumGARR/idem-tutorials/tree/master/idem-fedops/HOWTO-Shibboleth">HowTo - Shibboleth</a></li>
+          <li><a class="dropdown-item menu-text garr-text-warning" href="https://mdx.idem.garr.it/en/">IDEM MDX</a></li>
+          <li><a class="dropdown-item menu-text garr-text-warning" href="https://registry.idem.garr.it/rr3/">IDEM Registry</a></li>
+          <li><a class="dropdown-item menu-text garr-text-warning" 
+            href="https://wiki.idem.garr.it/wiki/Profilo_Tecnico_Operativo">Profilo Tecnico Operativo (PTO)</a></li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+</div>
