@@ -42,12 +42,14 @@
               </SSO>
             {{- else if .Env.EDS_ENABLED }}
               <!-- Embedded Discovery Service -->
-              <SSO discoveryProtocol="SAMLDS" discoveryURL="https://{{ .Env.SERVER_NAME }}/shibboleth-ds/index.php">
+              <SSO discoveryProtocol="SAMLDS" 
+                   discoveryURL="https://{{ .Env.SERVER_NAME }}/shibboleth-ds/index.php">
                 SAML2
               </SSO>
             {{- else if .Env.WAYF_URL }}
               <!-- Central Discovery Service - WAYF -->
-              <SSO discoveryProtocol="SAMLDS" discoveryURL="{{ .Env.WAYF_URL }}">
+              <SSO discoveryProtocol="SAMLDS" 
+                   discoveryURL="{{ .Env.WAYF_URL }}">
                 SAML2
               </SSO>
             {{- end }}
@@ -71,7 +73,7 @@
             <Handler type="DiscoveryFeed" Location="/DiscoFeed"/>
  
             <!-- Attribute Checker -->
-	          <Handler type="AttributeChecker" Location="/AttrChecker" template="attrChecker.html" attributes="displayName givenName mail" flushSession="true"/>
+	          <Handler type="AttributeChecker" Location="/AttrChecker" template="attrChecker.html" attributes="persistent-id eduPersonScopedAffiliation" flushSession="true"/>
 
        </Sessions>
 
