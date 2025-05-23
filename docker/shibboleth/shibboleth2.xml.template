@@ -40,7 +40,7 @@
               <SSO entityID="{{ .Env.REMOTE_IDP_ENTITY_ID }}">
                 SAML2
               </SSO>
-            {{- else if .Env.EDS_ENABLED }}
+            {{- else if and .Env.EDS_ENABLED (eq .Env.EDS_ENABLED "true") }}
               <!-- Embedded Discovery Service -->
               <SSO discoveryProtocol="SAMLDS" 
                    discoveryURL="https://{{ .Env.SERVER_NAME }}/shibboleth-ds/index.php">

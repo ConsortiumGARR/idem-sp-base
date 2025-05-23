@@ -10,6 +10,7 @@ templates=(
     "/var/www/html/sp/shared/footer.html.template"
     "/var/www/html/sp/shared/logout.php.template"
     "/etc/supervisor/supervisord.conf.template"
+    "/var/www/html/sp/privacy.php.template"
 )
 
 for src in "${templates[@]}"; do
@@ -54,7 +55,7 @@ else
     echo "[setup][OK] Certs present. Keys assumed present or previously decrypted."
 fi
 
-if [ -n ${EDS_ENABLED} ]; then
+if [ -n ${EDS_ENABLED} ] && [ "${EDS_ENABLED}" = "true" ]; then
     export ESCAPED_SERVER_NAME=$(printf '%s' "${SERVER_NAME}" | sed -e 's/\//\\\//g' -e 's/\./\\./g')
     templates=(
     "/etc/shibboleth-ds/idpselect_config.js.template"

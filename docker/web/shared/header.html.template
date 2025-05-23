@@ -37,7 +37,7 @@
         .menu-text {
             font-weight: bold;
         }
-    {{- if .Env.EDS_ENABLED }}
+    {{- if and .Env.EDS_ENABLED (eq .Env.EDS_ENABLED "true") }}
         #idpSelect form {
             max-width: 500px;
             margin: auto;

@@ -42,7 +42,7 @@ redirect_stderr=true
 autorestart=true
 
 
-{{- if .Env.EDS_ENABLED }}
+{{- if and .Env.EDS_ENABLED (eq .Env.EDS_ENABLED "true") }}
 [program:cron]
 command=/usr/sbin/cron -f -L 15
 user=root

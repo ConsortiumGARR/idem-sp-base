@@ -10,9 +10,9 @@ services:
             - "{{ https_port }}:443"
         volumes:
             - "/srv/idem-certbot:/etc/letsencrypt"
+        restart: unless-stopped
         logging:
             driver: syslog
             options:
                 syslog-address: "udp://{{ node_ip_priv }}:514"
                 tag: "{{ '{{' }} .Name {{ '}}' }}"
-        restart: unless-stopped

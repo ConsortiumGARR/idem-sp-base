@@ -4,7 +4,9 @@ DOCKER_BUILDKIT=1 docker build --no-cache -f Dockerfile --target stage .
 
 DOCKER_BUILDKIT=1 docker build --build-arg SP_CERT_PATH="sp.aai-test.garr.it/sp-certs/staging" --no-cache -f sp-base/docker/Dockerfile --target idem -t gitlab.dir.garr.it:4567/idem/idem-sp/sp.aai-test.garr.it:1.0.1 .
 
-docker push gitlab.dir.garr.it:4567/idem/idem-sp/sp.aai-test.garr.it:1.0.1
+DOCKER_BUILDKIT=1 docker build --build-arg SP_CERT_PATH="sp-demo.idem.garr.it/sp-certs/prod" --build-arg SP_PRIVPOLICY_PATH="sp-demo.idem.garr.it/source/" --no-cache -f sp-base/docker/Dockerfile --target idem -t gitlab.dir.garr.it:4567/idem/idem-sp/sp-demo.idem.garr.it:1.0.0 .
+
+docker push gitlab.dir.garr.it:4567/idem/idem-sp/sp.aai-test.garr.it:1.0.0
 
 Per stage intendiamo:
 

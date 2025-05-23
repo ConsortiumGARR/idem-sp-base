@@ -42,6 +42,13 @@ COPY sp-base/docker/shibboleth/shibboleth2.xml.template /etc/shibboleth/shibbole
 COPY sp-base/docker/shibboleth/shibd.logger /etc/shibboleth/shibd.logger
 RUN chown -R _shibd:_shibd /var/run/shibboleth /etc/shibboleth 
 
+# EMBEDDED DISCOVERY SERVICE
+RUN wget https://shibboleth.net/downloads/embedded-discovery-service/latest/shibboleth-embedded-ds-1.3.0.tar.gz -O /usr/local/src/shibboleth-eds.tar.gz \
+    && cd /usr/local/src/ \
+    && tar xzf shibboleth-eds.tar.gz \
+    && cd shibboleth-embedded-ds-1.3.0 \
+    && make install
+
 # RSYSLOG
 COPY sp-base/docker/rsyslog/rsyslog.conf /etc/rsyslog.conf
 
@@ -64,39 +71,22 @@ FROM builder AS example
 CMD ["/usr/local/bin/start.sh"]
 
 
-### Start idem SP stage building
-FROM builder AS idem_no_eds
-
-ARG SP_CERT_PATH
-
-# Copy the SP signing/encryption certificates
-COPY ${SP_CERT_PATH}/ /etc/shibboleth/
-
-# Retrieving Federation Certificate for MDX
-RUN wget https://mdx.idem.garr.it/idem-mdx-service-crt.pem -O /etc/shibboleth/idem-mdx-service-crt.pem
-
-CMD ["/usr/local/bin/start.sh"]
-
-
 ### Start idem SP stage building with EDS
-FROM builder AS idem_with_eds
+FROM builder AS idem
 
 ARG SP_CERT_PATH
+ARG SP_PRIVPOLICY_PATH
 
 # Copy the SP signing/encryption certificates
 COPY ${SP_CERT_PATH}/ /etc/shibboleth/
 
+# COpy the SP privacy policy
+COPY ${SP_PRIVPOLICY_PATH}/privacy.php.template /var/www/html/sp/
+
 # Retrieving Federation Certificate for MDX
 RUN wget https://mdx.idem.garr.it/idem-mdx-service-crt.pem -O /etc/shibboleth/idem-mdx-service-crt.pem
 
-# EMBEDDED DISCOVERY SERVICE
-
-RUN wget https://shibboleth.net/downloads/embedded-discovery-service/latest/shibboleth-embedded-ds-1.3.0.tar.gz -O /usr/local/src/shibboleth-eds.tar.gz \
-    && cd /usr/local/src/ \
-    && tar xzf shibboleth-eds.tar.gz \
-    && cd shibboleth-embedded-ds-1.3.0 \
-    && make install
-
+# Shibboleth EDS config
 COPY sp-base/docker/shibboleth-eds/idem_jwt_to_json /opt/idem_jwt_to_json/
 COPY sp-base/docker/shibboleth-eds/config/ /etc/shibboleth-ds/
 RUN chmod +x /opt/idem_jwt_to_json/decodeToken.py
