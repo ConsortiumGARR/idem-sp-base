@@ -1,8 +1,8 @@
-- name: Deploy Docker SP Staging
-  hosts: ct1-n3
+- name: Deploy IDEM SP
+  hosts: pa1-n3
   become: true
   become_method: sudo
-  remote_user: costa
+  remote_user: dilorenzo
   roles:
     - requirements
     - setup

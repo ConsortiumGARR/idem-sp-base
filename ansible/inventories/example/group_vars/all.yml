@@ -1,0 +1,36 @@
+# Docker Container
+docker_image_name: "sp.example.org"
+version_idem_sp: example
+deploy_type: example
+
+# SSL
+fqdn: "sp.example.org"
+http_port: 8080
+https_port: 8443
+
+# SP Config
+server_admin: admin@example.org
+
+# Type of SP: "IDEM Test" or "IDEM and eduGAIN", default: "Example"
+federation_type: Example
+
+# The Service Provider EntityID - e.g. "https://example.org/shibboleth"
+entity_id: "https://example.org/shibboleth"
+
+# If not included in the cert file, set also the ca_cert file name
+ca_cert:
+
+### Metadata
+# If you need to connect one SP with only one IdP set the REMOTE_IDP_ENTITY_ID and the REMOTE_IDP_METADATA_URL variables.
+# If you need to connect to >1 IdP:
+# - set the WAYF_URL if you want the WAYF. (e.g. for IDEM TEST Federation, WAYF_URL="https://wayf.idem-test.garr.it/WAYF")
+# - set the EDS_ENABLED to 'true' if you want to use the Shibboleth EDS
+remote_idp_entity_id: https://idp.example.org/idp/shibboleth
+remote_idp_metadata_url: https://idp.example.org/idp/shibboleth
+
+wayf_url:
+
+eds_enabled: "false"
+
+# To use MDX, set the MDX_FED_TYPE variable. Possible values: idem-test, idem, edugain.
+mdx_fed_type:

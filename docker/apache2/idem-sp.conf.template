@@ -10,6 +10,13 @@ ServerTokens Prod
 
 ServerName "{{ .Env.SERVER_NAME }}"
 
+{{- if (eq .Env.DEPLOY_TYPE "prod") }}
+<IfModule mod_remoteip.c>
+   RemoteIPProxyProtocol On
+   RemoteIPInternalProxy {{ .Env.HAPROXY_IP_RANGE }}
+</IfModule>
+{{- end }}
+
 <VirtualHost *:80>
    Redirect permanent "/" "https://{{ .Env.SERVER_NAME }}/"
    RedirectMatch permanent ^/(.*)$ https://{{ .Env.SERVER_NAME }}/$1

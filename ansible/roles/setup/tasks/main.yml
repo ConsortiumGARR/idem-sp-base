@@ -7,8 +7,8 @@
     state: directory
     recurse: true
   loop:
-    - "/opt/docker-logs/idem-sp-{{ location }}"
-    - /opt/idem-sp
+    - "/opt/docker-logs/{{ fqdn }}-{{ location }}"
+    - /opt/{{ fqdn }}
 
 - name: Ensure UDP is enabled
   ansible.builtin.lineinfile:
@@ -30,7 +30,7 @@
 - name: Configure Docker Compose
   ansible.builtin.template:
     src: "{{ item }}.j2"
-    dest: "/opt/idem-sp/{{ item }}"
+    dest: "/opt/{{ fqdn }}/{{ item }}"
     mode: "0755"
   loop:
     - "docker-compose.yml"
@@ -44,6 +44,6 @@
 - name: Run service containers
   ansible.builtin.shell: "docker compose pull ; docker compose up -d"
   args:
-    chdir: /opt/idem-sp
+    chdir: /opt/{{ fqdn }}
   register: cmd_output
   changed_when: cmd_output.rc != 0

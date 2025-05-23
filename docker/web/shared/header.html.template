@@ -140,7 +140,7 @@
     
         {{ if eq .Env.FEDERATION_TYPE "IDEM and eduGAIN" }}
         <a href="https://edugain.org/">
-            <img src="/assets/edugain_white.png" class="img-fluid" style="max-height: 150px;">
+            <img src="/assets/edugain_white.png" class="img-fluid" style="max-height: 50px;">
         </a>
         {{ else if eq .Env.FEDERATION_TYPE "IDEM Test" }}
         <div style="flex:1; text-align: center;"></div>

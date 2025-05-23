@@ -101,7 +101,7 @@ ln -s /var/www/html/sp/shared/index.php /var/www/html/sp/secure/index.php
 ln -s /var/www/html/sp/shared/index.php /var/www/html/sp/secureMFA/index.php
 chown -R www-data:www-data /var/www/html/sp/secure*
 a2dissite 000-default
-a2enmod ssl headers alias include negotiation shib
+a2enmod ssl headers alias include negotiation shib remoteip
 a2ensite idem-sp.conf
 
 # Permissions
