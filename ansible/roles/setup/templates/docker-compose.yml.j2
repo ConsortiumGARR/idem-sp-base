@@ -1,6 +1,6 @@
 services:
     idem-sp:
-        image: gitlab.dir.garr.it:4567/idem/{{ docker_image_name }}:{{ version_idem_sp }}
+        image: {{ container_registry }}{{ docker_image_name }}:{{ version_idem_sp }}
         container_name: {{ fqdn }}-{{ location }}
         hostname: {{ fqdn }}
         env_file:

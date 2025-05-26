@@ -1,36 +1,63 @@
-# Docker Container
-docker_image_name: "sp.example.org"
-version_idem_sp: example
-deploy_type: example
+### Variables ###
 
-# SSL
+# Name of the docker image
+docker_image_name: "sp.example.org"
+# Name of the Container Registry where the image is uploaded. Leave blank if unused.
+container_registry: 
+
+# Name of the SP docker image version 
+version_idem_sp: example
+
+# This is the Full Qualified Domain Name used in the Apache2 configuration
 fqdn: "sp.example.org"
+
+# This is used to customize the name of the docker container - e.g. "local" 
+location: local
+
+# These are the ports used in the Apache2 configuration, mapped in docker compose. 
 http_port: 8080
 https_port: 8443
 
-# SP Config
+# This is the ServerAdmin in the Apache2 configuration
 server_admin: admin@example.org
-
-# Type of SP: "IDEM Test" or "IDEM and eduGAIN", default: "Example"
-federation_type: Example
 
 # The Service Provider EntityID - e.g. "https://example.org/shibboleth"
 entity_id: "https://example.org/shibboleth"
 
-# If not included in the cert file, set also the ca_cert file name
+# Passphrase used to decrypt the private key. In order to decrypt the private keys, they must be named:
+# sp-signing-key-aes256.pem and sp-encrypt-key-aes256.pem
+cert_passphrase:
+
+# If the Chain certificate is not included in the cert file, set also the ca_cert file name.
 ca_cert:
 
-### Metadata
+### Discovery Service and Metadata
 # If you need to connect one SP with only one IdP set the REMOTE_IDP_ENTITY_ID and the REMOTE_IDP_METADATA_URL variables.
 # If you need to connect to >1 IdP:
 # - set the WAYF_URL if you want the WAYF. (e.g. for IDEM TEST Federation, WAYF_URL="https://wayf.idem-test.garr.it/WAYF")
 # - set the EDS_ENABLED to 'true' if you want to use the Shibboleth EDS
+#
+# Please note that only one of the alternatives can be setted at a time.
+# Please leave blank all the unused variables.
+# If two or more alternatives are setted the priority is: EDS > WAYF > Single IdP
 remote_idp_entity_id: https://idp.example.org/idp/shibboleth
 remote_idp_metadata_url: https://idp.example.org/idp/shibboleth
 
 wayf_url:
 
-eds_enabled: "false"
+eds_enabled:
 
-# To use MDX, set the MDX_FED_TYPE variable. Possible values: idem-test, idem, edugain.
+# To use MDX service, set the MDX_FED_TYPE variable. 
+# Possible values: idem-test, idem, edugain.
+# More infos here: https://mdx.idem.garr.it
 mdx_fed_type:
+
+# Use only if you are part of a Feration.
+# Possible values: "IDEM Test", "IDEM and eduGAIN"
+federation_type:
+
+# This variable is used for internal purpose. Please Ignore.
+deploy_type: example
+
+# You can push all your logs on a syslog. Insert the IP of the syslog
+node_ip_priv:

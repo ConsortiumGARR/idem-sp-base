@@ -55,72 +55,62 @@ DOC: <https://docs.ansible.com/ansible/latest/installation_guide/installation_di
       rm sysbox-ce_0.6.4-0.linux_amd64.deb
       ```
 
-2. Create the `dev-idem-sp` Container:
+2. Create the `dev-sp-demo` Container:
 
       ```bash
-      docker run --runtime=sysbox-runc -id -h dev-idem-sp --name dev-idem-sp nestybox/ubuntu-noble-systemd-docker:latest
+      docker run --runtime=sysbox-runc -id -h dev-sp-demo --name dev-sp-demo nestybox/ubuntu-noble-systemd-docker:latest
       ```
 
-3. Configure OpenSSH into `dev-idem-sp` container:
+3. Configure OpenSSH into `dev-sp-demo` container:
 
       ```bash
-      docker exec -i dev-idem-sp bash -c "apt-get update && apt-get install -y python3 docker-compose --no-install-recommends --no-install-suggests && echo 'admin ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers"
+      docker exec -i dev-sp-demo bash -c "apt-get update && apt-get install -y python3 docker-compose --no-install-recommends --no-install-suggests && echo 'admin ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers"
       ```
 
-4. Get the IP address of the `dev-idem-sp` container:
+4. Get the IP address of the `dev-sp-demo` container:
 
       ```bash
-      {% raw %}docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' dev-idem-sp{% endraw %}
+      {% raw %}docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' dev-sp-demo{% endraw %}
       ```
 
-5. Load your personal SSH credential (id_rsa) in the `dev-idem-sp` container:
+5. Load your personal SSH credential (id_rsa) in the `dev-sp-demo` container:
 
       `ssh-copy-id admin@<CONTAINER-IP>`   (password: `admin`)
 
-6. Now you can log-in the `dev-idem-sp` container with:
+6. Now you can log-in the `dev-sp-demo` container with:
 
       `ssh admin@<CONTAINER-IP>`
 
       (it works also on Visual Studio Code)
 
-## Configure IDEM sp Service into the Docker-in-Docker container
+## Configure SP DEMO Service into the Docker-in-Docker container
 
 1. Download the source code into the `HOME` of your personal computer:
 
       ```bash
       sudo apt install git
       
-      cd $HOME
+      cd $HOME/idem-sp
       
       git clone https://gitlab.dir.garr.it/IDEM/idem-sp/sp-base.git
       ```
 
-2. Create the `inventory.ini` file for the environment:
+2. Follow the Setup instructions in `sp-base/docs/docs/development/deployment.md`.
 
-      ```bash
-      cd $HOME/idem-sp/sp-base/ansible/inventories
-      
-      cp -R example dev
-      
-      cd dev
-      ```
-
-3. Configure `inventory.ini` by filling the missing values.
-
-4. Run Ansible-Playbook to configure the Docker-in-Docker container:
+3. Run Ansible-Playbook to configure the Docker-in-Docker container:
 
       ```bash
       cd $HOME/idem-sp/
       
-      ansible-playbook sp-base/ansible/idem-sp-playbook.yml -i sp-base/ansible/inventories/dev/inventory.ini
+      ansible-playbook sp-base/ansible/sp-demo-playbook.yml -i sp-base/ansible/inventories/dev/inventory.ini
       ```
 
 ## Structure of the Repository
 
 - `ansible/`: Contains the playbook and roles to configure a new IDEM SP Service instance
 - `docs/`: Contains the documentation regarding the project
-- `docker/idem-sp/sp-base/Dockerfile`: File needed to create a new Docker image of IDEM SP Service
-- `ansible/roles/templates/docker-compose.yml.j2`: File needed to power up the IDEM SP Service docker environment
+- `docker/sp-demo/sp-base/Dockerfile`: File needed to create a new Docker image of IDEM SP Service
+- `ansible/roles/templates/docker-compose.yml.j2`: Template needed to power up the IDEM SP Service docker environment
 
 ## Miscellanous
 

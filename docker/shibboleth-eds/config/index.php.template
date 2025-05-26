@@ -10,12 +10,18 @@
         <div class="mb-4">
           <h2 class="garr-text-warning">Welcome to SP DEMO!</h2>
           <p class="text-start">
-            This is a test Service Provider designed for IdP administrators to verify attribute release within the {{ .Env.FEDERATION_TYPE }} federations.
+            This is a test Service Provider designed for IdP administrators to verify attribute release 
+            {{- if .Env.FEDERATION_TYPE }}
+              within the {{ .Env.FEDERATION_TYPE }} federation
+            {{- end }}
+            .
             It displays a summary HTML page showing the attributes sent by the IdP in the current session.
           </p>
+          {{- if .Env.FEDERATION_TYPE }}
           <p class="text-start">
-            Please note: this service is intended for participants of the {{ .Env.FEDERATION_TYPE }} federations only.
+            Please note: this service is intended for participants of the {{ .Env.FEDERATION_TYPE }} federation only.
           </p>
+          {{- end }}
         </div>
 
         <br>

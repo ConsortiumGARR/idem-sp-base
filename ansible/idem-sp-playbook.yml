@@ -1,8 +1,8 @@
 - name: Deploy IDEM SP
-  hosts: pa1-n3
+  hosts: #Insert the name of your RemoteHost or localhost
   become: true
   become_method: sudo
-  remote_user: dilorenzo
+  remote_user: #Insert the SSH user name that has access to the remote vm
   roles:
     - requirements
     - setup
