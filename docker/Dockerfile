@@ -1,5 +1,5 @@
-### Start builder 
-FROM debian:12-slim AS builder
+### Start base
+FROM debian:12-slim AS base
 COPY --from=hairyhenderson/gomplate:v4.3.2 /gomplate /bin/gomplate
 
 # Installing required packages
@@ -65,14 +65,23 @@ COPY sp-base/docker/start.sh /usr/local/bin/start.sh
 RUN chmod +x /usr/local/bin/start.sh
 
 
-### Start example stage building
-FROM builder AS example
+### Start custom SP stage
+FROM base AS custom
+
+ARG SP_CERT_PATH
+ARG SP_PRIVPOLICY_PATH
+
+# Copy the SP signing/encryption certificates, leave the folder empty if you don't have certificates.
+COPY ${SP_CERT_PATH}/ /etc/shibboleth/
+
+# COpy the SP privacy policy
+COPY ${SP_PRIVPOLICY_PATH}/privacy.php.template /var/www/html/sp/
 
 CMD ["/usr/local/bin/start.sh"]
 
 
-### Start idem SP stage building with EDS
-FROM builder AS idem
+### Start idem SP stage
+FROM base AS idem
 
 ARG SP_CERT_PATH
 ARG SP_PRIVPOLICY_PATH

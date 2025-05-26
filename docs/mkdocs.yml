@@ -11,15 +11,10 @@ edit_uri: -/edit/main/docs/docs
 # Page tree
 nav:
   - Introduction: index.md
-  - Architecture: 
-    - architecture/architecture.md
-    - architecture/deployment.md
+  - Architecture: architecture.md
   - Development:
-    - development/update-idem-conf-docker-image.md
+    - development/build.md
     - development/test-deployment.md
-  - HowTo:
-    - howtos/disaster-recovery.md
-  - Checklist: checklist.md
 
 # - Nome della sezione: nome del file.md
 # Esempio:

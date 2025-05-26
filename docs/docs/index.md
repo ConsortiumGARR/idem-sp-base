@@ -1,3 +1,3 @@
 # IDEM SP
 
-Web service delivered with Docker containers suitable for the deployment of a DEMO Service Provider that can be used by the IDEM GARR AAI federation.
+This repository can be used to deploy a DEMO Service Provider, using Docker and Ansible, that can be used within the IDEM/eduGAIN federation.
