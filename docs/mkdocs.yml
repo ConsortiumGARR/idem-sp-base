@@ -1,10 +1,10 @@
 #Da modificare
 
-site_name: IDEM SP(?)
+site_name: SP BASE by IDEM
 site_author: IDEM
 
 repo_url: https://gitlab.dir.garr.it/IDEM/idem-sp/sp-base
-repo_name: idem/idem-sp/sp-base
+repo_name: sp-base
 edit_uri: -/edit/main/docs/docs
 #view_uri: -/raw/main/docs/docs
 
