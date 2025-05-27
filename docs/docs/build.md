@@ -1,4 +1,4 @@
-# SP DEMO Service Docker Image
+# Docker Image Build
 
 ## Environment Configuration
 

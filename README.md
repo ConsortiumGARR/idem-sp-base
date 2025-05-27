@@ -1,21 +1,34 @@
 # SP-BASE
 
-DOCKER_BUILDKIT=1 docker build --no-cache -f Dockerfile --target stage .
+**SP-BASE** is a lightweight **SAML attribute viewer** designed to help visualize attributes released by an Identity Provider (IdP) during authentication.
+It is primarily intended as a **test Service Provider**, but can also be used in production-like environments, including within **federations** such as **IDEM** and **eduGAIN**.
 
-DOCKER_BUILDKIT=1 docker build --build-arg SP_CERT_PATH="sp.aai-test.garr.it/sp-certs/staging" --no-cache -f sp-base/docker/Dockerfile --target idem -t gitlab.dir.garr.it:4567/idem/idem-sp/sp.aai-test.garr.it:1.0.1 .
+When accessed via SAML login, SP-BASE presents a summary page displaying the attributes received from the IdP for the current session.
 
-DOCKER_BUILDKIT=1 docker build --build-arg SP_CERT_PATH="sp-demo.idem.garr.it/sp-certs/prod" --build-arg SP_PRIVPOLICY_PATH="sp-demo.idem.garr.it/source/" --no-cache -f sp-base/docker/Dockerfile --target idem -t gitlab.dir.garr.it:4567/idem/idem-sp/sp-demo.idem.garr.it:1.0.0 .
+The service also supports **Multi-Factor Authentication (MFA)** by requesting the **[REFEDS MFA Profile](https://refeds.org/profile/mfa)**.
 
-docker push gitlab.dir.garr.it:4567/idem/idem-sp/sp.aai-test.garr.it:1.0.0
+---
 
-Per stage intendiamo:
+## Features
 
-- example
-- idem-test
-- edugain
+- Acts as an attribute viewer for SAML-based logins
+- Displays all attributes released by the IdP
+- Supports MFA authentication using the REFEDS MFA Profile
+- Federation-ready (IDEM / eduGAIN compatible)
+- Easily deployable using **Docker** and **Ansible**
 
-FEDERATION_TYPE='IDEM and eduGAIN'
-FEDERATION_TYPE='IDEM Test'
-FEDERATION_TYPE='Example'
+---
 
-openssl rsa -aes256 -in your.key -out your.encrypted.key
+## Requirements
+
+This project requires both **Docker** and **Ansible** to build and deploy.
+
+---
+
+## Documentation
+
+- **Architecture overview:** [docs/architecture.md](./docs/docs/architecture.md)  
+- **Build instructions:** [docs/development/build.md](./docs/docs/development/build.md)  
+- **Deployment guide:**
+  - Local Deployment: [docs/development/test-deployment.md](./docs/docs/development/test-deployment.md)
+  - Remote Deployment: [docs/development/deployment.md](./docs/docs/development/deployment.md)

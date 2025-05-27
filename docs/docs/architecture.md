@@ -1,6 +1,6 @@
 # Architecture
 
-![Architecture]( da creare immagine nuova )
+![Architecture](./assets/architecture.svg)
 
 ## Components
 

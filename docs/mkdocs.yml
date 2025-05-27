@@ -12,9 +12,10 @@ edit_uri: -/edit/main/docs/docs
 nav:
   - Introduction: index.md
   - Architecture: architecture.md
-  - Development:
-    - development/build.md
-    - development/test-deployment.md
+  - Docker Image Build: build.md
+  - Deployment:
+    - deployment/remote-deployment.md
+    - deployment/local-deployment.md
 
 # - Nome della sezione: nome del file.md
 # Esempio:

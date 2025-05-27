@@ -11,7 +11,7 @@ The deployment of the service is done with Ansible.
 
     To enable the local deployment, just uncomment the line `#localhost ansible_connection=local`.
 
-2. Update the `sp-base/ansible/idem-sp-playbook.yml` file according to your needs.
+2. Copy the `sp-base/ansible/sp-playbook-template.yml` to `sp-base/ansible/sp-playbook.yml` and modify it according to your needs.
 
 3. Configuration variables:
 
@@ -45,4 +45,4 @@ The deployment of the service is done with Ansible.
 
 The default command to launch Ansible is:
 
-`ansible-playbook ansible/idem-sp-playbook.yml -i ansible/inventories/example/inventory.ini`
+`ansible-playbook ansible/sp-playbook.yml -i ansible/inventories/example/inventory.ini`

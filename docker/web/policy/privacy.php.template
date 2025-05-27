@@ -1,0 +1,173 @@
+<?php include('/var/www/html/sp/shared/header.html'); ?>
+
+<h1 class="garr-text-warning mb-4 text-center">Privacy Statement</h1>
+
+<table class="table table-bordered table-striped" style="table-layout: fixed; width: 70%;" align="center">
+  <tbody>
+    <tr>
+      <td class="garr-bar text-white fw-bold">
+        1. Name of the service
+      </td>
+      <td class="garr-bar text-white fw-bold">
+        1. Nome del servizio </td>
+    </tr>
+    <tr>
+      <td>Example SP</td>
+      <td>Example SP</td>
+    </tr>
+    <tr>
+      <td class="garr-bar text-white fw-bold">
+        2. Description of the service
+      </td>
+      <td class="garr-bar text-white fw-bold">
+        2. Descrizione del servizio
+      </td>
+    </tr>
+    <tr>
+      <td>Test SP used by IDP admins to check attribute release.</td>
+      <td>SP di test ad uso dei gestori di Idp per visualizzare il rilascio di attributi.</td>
+    </tr>
+    <tr>
+      <td class="garr-bar text-white fw-bold">
+        3. Data controller and a contact person
+      </td>
+      <td class="garr-bar text-white fw-bold">
+        3. Titolare del trattamento e contatti
+      </td>
+    </tr>
+    <tr>
+      <td>Example Organization<br>
+      Email: org@example.org</td>
+      <td>Example Organization<br>
+      Email: org@example.org</td>
+    </tr>
+    <tr>
+      <td class="garr-bar text-white fw-bold">
+        4. Jurisdiction
+      </td>
+      <td class="garr-bar text-white fw-bold">
+        4. Giurisdizione
+      </td>
+    </tr>
+    <tr>
+      <td>Locality</td>
+      <td>Locality</td>
+    </tr>
+    <tr>
+      <td class="garr-bar text-white fw-bold">
+        5. Personal data processed
+      </td>
+      <td class="garr-bar text-white fw-bold">
+        5. Dati personali trattati
+      </td>
+    </tr>
+    <tr>
+      <td>During a federated authentication following data is retrieved from your Home Organisation:
+	    <ol><li>For all users:</li>
+		    <ul>
+		      <li>IP address</li>
+		      <li>Referer address</li>
+		    </ul>
+      </ol>
+		  <ol start="2">
+		    <li>Only for authenticated users:</li>
+		    <ul>
+          <li>any attribute released from your Home Organisation</li>
+        </ul>
+      </ol>
+      <ol start="3">
+        <li>The following attributes are declared as required (R) to facilitate its release by the idp:</li>
+        <ul>
+            <li>Insert attribute list</li>
+        </ul>
+      </ol>
+      </td>
+      <td>Nel caso di autenticazione federata i seguenti dati sono recuperati dalla connessione alla sua Organizzazione:
+	      <ol><li>Per tutti gli utenti:</li>
+		      <ul>
+            <li>Indirizzo IP</li>
+            <li>Indirizzo HTTP Referer</li>
+		      </ul>
+        </ol>
+		    <ol start="2">
+		      <li>Solo per gli utenti autenticati:</li>
+		      <ul>
+            <li>qualsiasi attributo venga rilasciato</li>
+          </ul>
+        </ol>
+        <ol start="3">
+          <li>I seguenti attributi sono dichiarati come required (R) per favorirne il rilascio da parte dell'idp:</li>
+          <ul>
+            <li>Inserisci la lista degli attributi</li>
+          </ul>
+        </ol>
+      </td>
+    </tr>
+    <tr>
+      <td class="garr-bar text-white fw-bold">
+        6. Purpose of the processing of personal data
+      </td>
+      <td class="garr-bar text-white fw-bold">
+        6. Finalit&agrave; del trattamento
+      </td>
+    </tr>
+    <tr>
+      <td>The IP and referer addresses of all web page visitors are stored in the web server log file for debugging purposes. For authenticated users any attribute retrieved will be showed up on the screen of the user to help him check if the Home Organisation is able to release the desired attributes</td>
+      <td>Gli indirizzi IP e HTTP Referer degli utenti connessi sono salvati nei file di log del server web con lo scopo di risolvere eventuali problemi di connessione. Per gli utenti autenticati tutti gli attributi recuperati dalla connessione all'identity provider saranno visualizzati immediatamente nel video dell'utente come utile strumento di verifica del rilascio degli attributi</td>
+    </tr>
+    <tr>
+      <td class="garr-bar text-white fw-bold">
+        7. Third parties to whom personal data is disclosed 
+      </td>
+      <td class="garr-bar text-white fw-bold">
+        7. Terze parti alle quali i dati sono trasmessi
+      </td>
+    </tr>
+    <tr>
+      <td>No data will be released to third parties. Personal data is only shown to the user himself.</td>
+      <td>Nessun dato viene rilasciato a terze parti. I dati personali contenuti negli attributi ricevuti sono visualizzati dall'utente stesso dopo l'autenticazione.</td>
+    </tr>
+    <tr>
+      <td class="garr-bar text-white fw-bold">
+        8. How to access, rectify and delete the personal data
+      </td>
+      <td class="garr-bar text-white fw-bold">
+        8. Accedere, rettificare e rimuovere i dati personali
+      </td>
+    </tr>
+    <tr>
+      <td>Contact help@example.org. To rectify the data released by an organisation about you, contact that Home Organisation's IT helpdesk.</td>
+      <td>Contattare help@example.org. </td>
+    </tr>
+    <tr>
+      <td class="garr-bar text-white fw-bold">
+        9. Data retention
+      </td>
+      <td class="garr-bar text-white fw-bold">
+        9. Durata del trattamento
+      </td>
+    </tr>
+    <tr>
+      <td>Personal data, IP address and referrer are only stored in log files created by the web server and the SAML software. Log files are kept only for X months and are deleted automatically after this time.</td>
+      <td>I dati personali, gli indirizzi IP e HTTP Refere sono salvati nei file di log creati dal server web e dal software SAML. I file di log sono conservati per X mesi e cancellati automaticamente.</td>
+    </tr>
+    <tr>
+      <td class="garr-bar text-white fw-bold">
+        10. Data Protection Code of Conduct
+      </td>
+      <td class="garr-bar text-white fw-bold">
+        10. Codice di Condotta per la protezione dei dati
+      </td>
+    </tr>
+    <tr>
+      <td>Personal data will be protected according ...</td>
+      <td>I suoi dati personali saranno protetti secondo ...</td>
+    </tr>  
+</tbody>
+</table>
+
+<br>
+<?php include('/var/www/html/sp/shared/footer.html'); ?>
+
+</body>
+</html>

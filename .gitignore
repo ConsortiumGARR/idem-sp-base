@@ -30,3 +30,4 @@ venv
 sp.aai-test.garr.it/
 sp-demo.idem.garr.it/
 inventory.ini
+sp-playbook.yml
