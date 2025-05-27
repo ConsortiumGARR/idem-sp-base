@@ -23,7 +23,7 @@
 - name: Configure Docker Logs
   ansible.builtin.template:
     src: "11-idem-sp.conf.j2"
-    dest: "/etc/rsyslog.d/11-idem-sp.conf"
+    dest: "/etc/rsyslog.d/11-idem-{{ fqdn | replace('.', '-') }}.conf"
     mode: "0644"
   notify: Restart Rsyslog
 

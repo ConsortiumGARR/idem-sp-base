@@ -1,7 +1,7 @@
 <?php include('/var/www/html/sp/shared/header.html'); ?>
 <?php include('/var/www/html/sp/shared/logout.php'); ?>
 
-<h2 class="garr-text-warning mb-4 text-center">Welcome to SP DEMO Application!</h2>
+<h2 class="garr-text-warning mb-4 text-center">SAML Login Details</h2>
 
 <br>
 <div class="w-75 mx-auto">

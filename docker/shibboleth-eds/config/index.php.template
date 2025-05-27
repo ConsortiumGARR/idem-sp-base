@@ -8,7 +8,7 @@
 
         <!-- Testo Introduttivo -->
         <div class="mb-4">
-          <h2 class="garr-text-warning">Welcome to SP DEMO!</h2>
+          <h2 class="garr-text-warning">Welcome!</h2>
           <p class="text-start">
             This is a test Service Provider designed for IdP administrators to verify attribute release 
             {{- if .Env.FEDERATION_TYPE }}

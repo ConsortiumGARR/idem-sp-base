@@ -3,10 +3,10 @@
 
 # Templates for other.log
 template(name="DockerOtherLogsPath" type="list") {
-    constant(value="/opt/docker-logs/")
-    property(name="programname")
-    constant(value="/")
-    constant(value="other.log")
+   constant(value="/opt/docker-logs/")
+   property(name="programname")
+   constant(value="/")
+   constant(value="other.log")
 }
 
 template(name="extractOther" type="list"){
@@ -22,31 +22,75 @@ template(name="extractMsgOnly" type="list"){
    constant(value="\n")
 }
 
-# NGINX Access Log PATH
-template(name="DockerNginxAccessLogsPath" type="list") {
-    constant(value="/opt/docker-logs/")
-    property(name="programname")
-    constant(value="/")
-    constant(value="nginx-access.log")
+# Apache2 Access Log PATH
+template(name="DockerApache2AccessLogsPath" type="list") {
+   constant(value="/opt/docker-logs/")
+   property(name="programname")
+   constant(value="/")
+   constant(value="apache-access.log")
 }
 
-# NGINX Error Log PATH
-template(name="DockerNginxErrorLogsPath" type="list") {
-    constant(value="/opt/docker-logs/")
-    property(name="programname")
-    constant(value="/")
-    constant(value="nginx-error.log")
+# Apache2 Error Log PATH
+template(name="DockerApache2ErrorLogsPath" type="list") {
+   constant(value="/opt/docker-logs/")
+   property(name="programname")
+   constant(value="/")
+   constant(value="apache-error.log")
+}
+
+# Cron + JWT2JSON Log PATH
+template(name="DockerCronLogsPath" type="list") {
+   constant(value="/opt/docker-logs/")
+   property(name="programname")
+   constant(value="/")
+   constant(value="cron.log")
+}
+
+# Shibd Log PATH
+template(name="DockerShibdLogsPath" type="list") {
+   constant(value="/opt/docker-logs/")
+   property(name="programname")
+   constant(value="/")
+   constant(value="shibd.log")
+}
+
+# Shibd-warn Log PATH
+template(name="DockerShibdWarnLogsPath" type="list") {
+   constant(value="/opt/docker-logs/")
+   property(name="programname")
+   constant(value="/")
+   constant(value="shibd-warn.log")
+}
+
+# Shibd-transaction Log PATH
+template(name="DockerShibdTransactionLogsPath" type="list") {
+   constant(value="/opt/docker-logs/")
+   property(name="programname")
+   constant(value="/")
+   constant(value="shibd-transaction.log")
 }
 
 # define new ruleset and add rules to it
 # http://www.rsyslog.com/doc/v8-stable/configuration/modules/omfile.html
-ruleset(name="remoteDockerContainersIdemConf") {
-   if ( $programname contains "idem-conf" ) then {
-      if ( $msg contains "[error]") then {
-         action(type="omfile" dynaFile="DockerNginxErrorLogsPath" template="extractMsgOnly")
+ruleset(name="remoteDockerContainers{{ fqdn | replace('.', '') | replace('-', '') | title | replace(' ', '') }}") {
+   if ( $programname contains "{{ fqdn }}" ) then {
+      if ( $msg contains "[apache_access]") then {
+         action(type="omfile" dynaFile="DockerApache2AccessLogsPath" template="extractMsgOnly")
       }
-      else if ( $msg contains "{{ fqdn }}") then {
-         action(type="omfile" dynaFile="DockerNginxAccessLogsPath" template="extractMsgOnly")
+      else if ( $msg contains "[apache_error]") then {
+         action(type="omfile" dynaFile="DockerApache2ErrorLogsPath" template="extractMsgOnly")
+      }
+      else if ( $msg contains "[cron]" or $msg contains "[jwt2json]") then {
+         action(type="omfile" dynaFile="DockerCronLogsPath" template="extractMsgOnly")
+      }
+      else if ( $msg contains "[shibd]") then {
+         action(type="omfile" dynaFile="DockerShibdLogsPath" template="extractMsgOnly")
+      }
+      else if ( $msg contains "[shibd_warn]") then {
+         action(type="omfile" dynaFile="DockerShibdWarnLogsPath" template="extractMsgOnly")
+      }
+      else if ( $msg contains "[shibd_transaction]") then {
+         action(type="omfile" dynaFile="DockerShibdTransactionLogsPath" template="extractMsgOnly")
       }
       else {
          action(type="omfile" dynaFile="DockerOtherLogsPath" template="extractOther")
@@ -57,4 +101,4 @@ ruleset(name="remoteDockerContainersIdemConf") {
    }
 }
 
-input(type="imudp" port="514" ruleset="remoteDockerContainersIdemConf")
+input(type="imudp" port="514" ruleset="remoteDockerContainers{{ fqdn | replace('.', '') | replace('-', '') | title | replace(' ', '') }}")
