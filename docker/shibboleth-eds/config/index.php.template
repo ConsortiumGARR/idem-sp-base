@@ -12,9 +12,8 @@
           <p class="text-start">
             This is a test Service Provider designed for IdP administrators to verify attribute release 
             {{- if .Env.FEDERATION_TYPE }}
-              within the {{ .Env.FEDERATION_TYPE }} federation
+              within the {{ .Env.FEDERATION_TYPE }} federation.
             {{- end }}
-            .
             It displays a summary HTML page showing the attributes sent by the IdP in the current session.
           </p>
           {{- if .Env.FEDERATION_TYPE }}

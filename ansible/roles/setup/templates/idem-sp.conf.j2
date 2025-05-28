@@ -1,6 +1,8 @@
 # http://www.rsyslog.com/doc/v8-stable/configuration/properties.html
 # http://www.rsyslog.com/doc/v8-stable/configuration/templates.html
 
+input(type="imudp" port="514")
+
 # Templates for other.log
 template(name="DockerOtherLogsPath" type="list") {
    constant(value="/opt/docker-logs/")
@@ -72,33 +74,26 @@ template(name="DockerShibdTransactionLogsPath" type="list") {
 
 # define new ruleset and add rules to it
 # http://www.rsyslog.com/doc/v8-stable/configuration/modules/omfile.html
-ruleset(name="remoteDockerContainers{{ fqdn | replace('.', '') | replace('-', '') | title | replace(' ', '') }}") {
-   if ( $programname contains "{{ fqdn }}" ) then {
-      if ( $msg contains "[apache_access]") then {
-         action(type="omfile" dynaFile="DockerApache2AccessLogsPath" template="extractMsgOnly")
-      }
-      else if ( $msg contains "[apache_error]") then {
-         action(type="omfile" dynaFile="DockerApache2ErrorLogsPath" template="extractMsgOnly")
-      }
-      else if ( $msg contains "[cron]" or $msg contains "[jwt2json]") then {
-         action(type="omfile" dynaFile="DockerCronLogsPath" template="extractMsgOnly")
-      }
-      else if ( $msg contains "[shibd]") then {
-         action(type="omfile" dynaFile="DockerShibdLogsPath" template="extractMsgOnly")
-      }
-      else if ( $msg contains "[shibd_warn]") then {
-         action(type="omfile" dynaFile="DockerShibdWarnLogsPath" template="extractMsgOnly")
-      }
-      else if ( $msg contains "[shibd_transaction]") then {
-         action(type="omfile" dynaFile="DockerShibdTransactionLogsPath" template="extractMsgOnly")
-      }
-      else {
-         action(type="omfile" dynaFile="DockerOtherLogsPath" template="extractOther")
-      }
+if ( $programname contains "{{ fqdn | replace('.garr.it', '')}}" ) then {
+   if ( $msg contains "[apache_access]") then {
+      action(type="omfile" dynaFile="DockerApache2AccessLogsPath" template="extractMsgOnly")
+   }
+   else if ( $msg contains "[apache_error]") then {
+      action(type="omfile" dynaFile="DockerApache2ErrorLogsPath" template="extractMsgOnly")
+   }
+   else if ( $msg contains "[cron]" or $msg contains "[jwt2json]") then {
+      action(type="omfile" dynaFile="DockerCronLogsPath" template="extractMsgOnly")
+   }
+   else if ( $msg contains "[shibd]") then {
+      action(type="omfile" dynaFile="DockerShibdLogsPath" template="extractMsgOnly")
+   }
+   else if ( $msg contains "[shibd_warn]") then {
+      action(type="omfile" dynaFile="DockerShibdWarnLogsPath" template="extractMsgOnly")
+   }
+   else if ( $msg contains "[shibd_transaction]") then {
+      action(type="omfile" dynaFile="DockerShibdTransactionLogsPath" template="extractMsgOnly")
    }
    else {
       action(type="omfile" dynaFile="DockerOtherLogsPath" template="extractOther")
    }
 }
-
-input(type="imudp" port="514" ruleset="remoteDockerContainers{{ fqdn | replace('.', '') | replace('-', '') | title | replace(' ', '') }}")

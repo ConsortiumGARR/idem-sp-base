@@ -4,3 +4,4 @@
   ansible.builtin.service:
     name: rsyslog
     state: restarted
+  listen: "restart_rsyslog"

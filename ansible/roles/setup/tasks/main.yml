@@ -18,14 +18,35 @@
   loop:
     - { regexp: '#module\(load="imudp"\)', line: 'module(load="imudp")' }
     - { regexp: '#input\(type="imudp" port="514"\)', line: 'input(type="imudp" port="514")' }
-  notify: Restart Rsyslog
+  notify: "restart_rsyslog"
+
+- name: Get list of existing rsyslog configuration files
+  ansible.builtin.find:
+    paths: /etc/rsyslog.d/
+    patterns: '*.conf'
+  register: rsyslog_files
+
+- name: Get list of existing rsyslog configuration files
+  ansible.builtin.find:
+    paths: /etc/rsyslog.d/
+    patterns: "*-idem-{{ fqdn | replace('.', '-') }}.conf"
+  register: rsysfile
+
+- name: Configure Docker Logs with incremented number
+  ansible.builtin.template:
+    src: "idem-sp.conf.j2"
+    dest: "/etc/rsyslog.d/{{ (rsyslog_files.files | map(attribute='path') | map('basename') | map('regex_search', '^\\d+') | select('defined') | map('int') | max | default(10)) + 1 }}-idem-{{ fqdn | replace('.', '-') }}.conf"
+    mode: "0644"
+  notify: "restart_rsyslog"
+  when: rsysfile['matched'] == 0
 
 - name: Configure Docker Logs
   ansible.builtin.template:
-    src: "11-idem-sp.conf.j2"
-    dest: "/etc/rsyslog.d/11-idem-{{ fqdn | replace('.', '-') }}.conf"
+    src: "idem-sp.conf.j2"
+    dest: "/etc/rsyslog.d/{{ ( rsysfile.files | map(attribute='path') | map('basename') | first )}}"
     mode: "0644"
-  notify: Restart Rsyslog
+  notify: "restart_rsyslog"
+  when: rsysfile['matched'] == 1
 
 - name: Configure Docker Compose
   ansible.builtin.template:
@@ -42,7 +63,7 @@
   changed_when: cmd_output.rc != 0 # <- Uses the return code to define when the task has changed.
 
 - name: Run service containers
-  ansible.builtin.shell: "docker compose pull ; docker compose up -d"
+  ansible.builtin.shell: "docker compose pull && docker compose up -d"
   args:
     chdir: /opt/{{ fqdn }}
   register: cmd_output
