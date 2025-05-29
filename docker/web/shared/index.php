@@ -44,6 +44,7 @@
                     "subject-id" => "urn:oasis:names:tc:SAML:attribute:subject-id",
                     "pairwise-id" => "urn:oasis:names:tc:SAML:attribute:pairwise-id",
                     "persistent-id" => "urn:oasis:names:tc:SAML:2.0:nameid-format:persistent",
+                    "transient-id" => "urn:oasis:names:tc:SAML:2.0:nameid-format:transient",
 
                     // eduPerson Schema
                     "eduPersonAffiliation" => "urn:oid:1.3.6.1.4.1.5923.1.1.1.1",

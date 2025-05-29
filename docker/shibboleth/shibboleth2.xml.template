@@ -13,7 +13,6 @@
     <ApplicationDefaults entityID="{{ .Env.ENTITY_ID }}"
         REMOTE_USER="eppn subject-id pairwise-id persistent-id"
         cipherSuites="DEFAULT:!EXP:!LOW:!aNULL:!eNULL:!DES:!IDEA:!SEED:!RC4:!3DES:!kRSA:!SSLv2:!SSLv3:!TLSv1:!TLSv1.1"
-        sessionHook="/Shibboleth.sso/AttrChecker"
         metadataAttributePrefix="Meta-">
 
         <!--
@@ -73,7 +72,7 @@
             <Handler type="DiscoveryFeed" Location="/DiscoFeed"/>
  
             <!-- Attribute Checker -->
-	          <Handler type="AttributeChecker" Location="/AttrChecker" template="attrChecker.html" attributes="persistent-id eduPersonScopedAffiliation" flushSession="true"/>
+	          <!-- <Handler type="AttributeChecker" Location="/AttrChecker" template="attrChecker.html" attributes="persistent-id eduPersonScopedAffiliation" flushSession="true"/> -->
 
        </Sessions>
 
