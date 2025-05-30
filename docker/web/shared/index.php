@@ -1,5 +1,8 @@
-<?php include('/var/www/html/sp/shared/header.html'); ?>
-<?php include('/var/www/html/sp/shared/logout.php'); ?>
+<?php
+$page_title = "SAML Login Details";
+include('/var/www/html/sp/shared/header.php');
+include('/var/www/html/sp/shared/logout.php');
+?>
 
 <h2 class="garr-text-warning mb-4 text-center">SAML Login Details</h2>
 

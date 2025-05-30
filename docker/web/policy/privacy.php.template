@@ -1,4 +1,7 @@
-<?php include('/var/www/html/sp/shared/header.html'); ?>
+<?php 
+$page_title = "Privacy Policy";
+include('/var/www/html/sp/shared/header.php'); 
+?>
 
 <h1 class="garr-text-warning mb-4 text-center">Privacy Statement</h1>
 

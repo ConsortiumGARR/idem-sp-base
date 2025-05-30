@@ -6,7 +6,7 @@ templates=(
     "/etc/apache2/sites-available/idem-sp.conf.template"
     "/etc/shibboleth/shibboleth2.xml.template"
     "/var/www/html/sp/index.php.template"
-    "/var/www/html/sp/shared/header.html.template"
+    "/var/www/html/sp/shared/header.php.template"
     "/var/www/html/sp/shared/footer.html.template"
     "/var/www/html/sp/shared/logout.php.template"
     "/etc/supervisor/supervisord.conf.template"

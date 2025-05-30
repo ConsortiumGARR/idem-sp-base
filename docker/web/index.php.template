@@ -1,4 +1,7 @@
-<?php include('/var/www/html/sp/shared/header.html'); ?>
+<?php 
+$page_title = "Welcome to SP";
+include('/var/www/html/sp/shared/header.php'); 
+?>
 
 <!-- Contenuto -->
 <main class="flex-grow-1 d-flex align-items-center">
