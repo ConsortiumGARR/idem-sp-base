@@ -61,3 +61,6 @@ deploy_type: example
 
 # You can push all your logs on a syslog. Insert the IP of the syslog
 node_ip_priv:
+
+#This variable is used to set the Haproxy IP range for proxy protocol. Leave blank if not used.
+haproxy_ip_range:
