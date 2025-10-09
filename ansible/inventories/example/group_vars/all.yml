@@ -1,12 +1,22 @@
 ### Variables ###
 
-# Name of the docker image
-docker_image_name: "sp.example.org"
 # Name of the Container Registry where the image is uploaded. Leave blank if unused.
 container_registry: 
-
+# Name of the docker image
+docker_image_name: "sp.example.org"
 # Name of the SP docker image version 
 version_idem_sp: example
+# This variable is used for internal purpose. Please Ignore.
+deploy_type: example
+
+### Registry Variables
+# If you don't use a registry you can leave the "registry_" variables blank.
+# Location of your registry
+registry_location:
+# User to use to access the registry
+registry_user:
+# User's password. Please remember to use !valut to keep it safe!
+registry_password:
 
 # This is the Full Qualified Domain Name used in the Apache2 configuration
 fqdn: "sp.example.org"
@@ -55,9 +65,6 @@ mdx_fed_type:
 # Use only if you are part of a Feration.
 # Possible values: "IDEM Test", "IDEM and eduGAIN"
 federation_type:
-
-# This variable is used for internal purpose. Please Ignore.
-deploy_type: example
 
 # You can push all your logs on a syslog. Insert the IP of the syslog
 node_ip_priv:
