@@ -1,0 +1,11 @@
+- name: Login on Container Registry
+  ansible.builtin.command: "docker login {{ registry_location }} -u {{ registry_user }} -p {{ registry_password }}"
+  register: cmd_output # <- Registers the command output.
+  changed_when: cmd_output.rc != 0 # <- Uses the return code to define when the task has changed.
+
+- name: Pull docker image
+  ansible.builtin.shell: "docker compose pull"
+  args:
+    chdir: /opt/{{ fqdn }}
+  register: cmd_output
+  changed_when: cmd_output.rc != 0
