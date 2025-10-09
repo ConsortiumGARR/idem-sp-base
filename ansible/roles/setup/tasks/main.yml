@@ -57,13 +57,8 @@
     - "docker-compose.yml"
     - ".env"
 
-- name: Login on Container Registry
-  ansible.builtin.command: "docker login {{ registry_location }} -u {{ registry_user }} -p {{ registry_password }}"
-  register: cmd_output # <- Registers the command output.
-  changed_when: cmd_output.rc != 0 # <- Uses the return code to define when the task has changed.
-
 - name: Run service containers
-  ansible.builtin.shell: "docker compose pull && docker compose up -d"
+  ansible.builtin.shell: "docker compose up -d"
   args:
     chdir: /opt/{{ fqdn }}
   register: cmd_output
