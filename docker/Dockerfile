@@ -48,7 +48,8 @@ RUN wget https://shibboleth.net/downloads/embedded-discovery-service/${SHIB_EDS_
     && cd /usr/local/src/ \
     && tar xzf shibboleth-eds.tar.gz \
     && cd shibboleth-embedded-ds-${SHIB_EDS_VERSION} \
-    && make install
+    && make install \
+    && sed -i 's/onmousedown/onclick/g' /etc/shibboleth-ds/idpselect.js
 
 # RSYSLOG
 COPY sp-base/docker/rsyslog/rsyslog.conf /etc/rsyslog.conf
