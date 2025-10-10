@@ -4,8 +4,6 @@
   changed_when: cmd_output.rc != 0 # <- Uses the return code to define when the task has changed.
 
 - name: Pull docker image
-  ansible.builtin.shell: "docker compose pull"
+  ansible.builtin.command: "docker compose pull"
   args:
     chdir: /opt/{{ fqdn }}
-  register: cmd_output
-  changed_when: cmd_output.rc != 0
