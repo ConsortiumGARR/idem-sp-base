@@ -33,7 +33,7 @@
 
 - name: Configure Docker Logs with incremented number
   ansible.builtin.template:
-    src: "{{ fqdn | replace('.', '-') }}.conf.j2"
+    src: "sp.conf.j2"
     dest: "/etc/rsyslog.d/{{ (rsyslog_files.files | map(attribute='path') | map('basename') | map('regex_search', '^\\d+') | select('defined') | map('int') | max | default(10)) + 1 }}-{{ fqdn | replace('.', '-') }}.conf"
     mode: "0644"
   notify: "restart_rsyslog"
@@ -41,7 +41,7 @@
 
 - name: Configure Docker Logs
   ansible.builtin.template:
-    src: "{{ fqdn | replace('.', '-') }}.conf.j2"
+    src: "sp.conf.j2"
     dest: "/etc/rsyslog.d/{{ ( rsysfile.files | map(attribute='path') | map('basename') | first )}}"
     mode: "0644"
   notify: "restart_rsyslog"
