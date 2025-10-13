@@ -13,10 +13,10 @@ The following instructions are tested on a Debian/Ubuntu server.
     - <https://docs.docker.com/engine/install/debian/>
     - <https://docs.docker.com/engine/install/linux-postinstall/>
 
-3. Clone the GIT Repository into the `$HOME/idem-sp` directory:
+3. Clone the GIT Repository into the `$HOME/sp-base` directory:
 
-    - `cd $HOME/idem-sp`
-    - `git clone git@gitlab.dir.garr.it:IDEM/idem-sp/sp-base.git`
+    - `cd $HOME`
+    - `git clone https://github.com/ConsortiumGARR/idem-sp-base.git sp-base`
 
 ## Usage
 
@@ -34,36 +34,29 @@ It is a multi-stage Dockerfile:
 
 1. Move to the sp-base folder:
 
-    - `cd $HOME/idem-sp`
+    - `cd $HOME/sp-base`
 
 2. Build the image depending on what you want to achieve:
 
     a. Base image - this is a template image, used only to check all the packages installed and all the templates/files used by the image:
 
-    - `docker build --no-cache -f sp-base/docker/Dockerfile --target base -t gitlab.dir.garr.it:4567/idem/idem-sp/sp-base:1.0.0 .`
+    - `docker build --no-cache -f sp-base/docker/Dockerfile --target base -t {{ docker_image_location }}{{ docker_image_name }}:{{ docker_image_version }} .`
 
     b. Custom image - this is a working image. If you don't have any certificates you can leave the `sp-base/docker/shibboleth/certs` folder empty and they will be automatically created:
 
-    - `docker build --build-arg SP_CERT_PATH="sp-base/docker/shibboleth/certs" --build-arg SP_PRIVPOLICY_PATH="sp-base/docker/web/policy" --no-cache -f sp-base/docker/Dockerfile --target custom -t gitlab.dir.garr.it:4567/idem/idem-sp/sp-custom:1.0.0 .`
+    - `docker build --build-arg SP_CERT_PATH="sp-base/docker/shibboleth/certs" --build-arg SP_PRIVPOLICY_PATH="sp-base/docker/web/policy" --no-cache -f sp-base/docker/Dockerfile --target custom -t {{ docker_image_location }}{{ docker_image_name }}:{{ docker_image_version }} .`
 
     c. Idem image - the difference from the example one is that this image use [MDX](https://mdx.idem.garr.it/en/) as Metadata provider and the configuration to use the [Embedded Discovery Service with MDX](https://mdx.idem.garr.it/en/EDS/shibboletheds/):
 
-    - `docker build --build-arg SP_CERT_PATH="sp-base/docker/shibboleth/certs" --build-arg SP_PRIVPOLICY_PATH="sp-base/docker/web/policy" --no-cache -f sp-base/docker/Dockerfile --target idem -t gitlab.dir.garr.it:4567/idem/idem-sp/sp-idem:1.0.0 .`
+    - `docker build --build-arg SP_CERT_PATH="sp-base/docker/shibboleth/certs" --build-arg SP_PRIVPOLICY_PATH="sp-base/docker/web/policy" --no-cache -f sp-base/docker/Dockerfile --target idem -t {{ docker_image_location }}{{ docker_image_name }}:{{ docker_image_version }} .`
 
 [Semantic Versioning](https://semver.org/) is generally used to generate new Docker images.
-
-### 3 - Push Docker image to Container Registry
-
-- `cd $HOME/idem-sp`
-- `docker push gitlab.dir.garr.it:4567/idem/idem-sp/<SP_IMAGE_NAME>:<SP_IMAGE_TAG>`
-
-The list of the Docker images already available for IDEM SP Service is available into the [Container Registry](https://gitlab.dir.garr.it/groups/IDEM/idem-sp/-/container_registries) of the GitLab repository.
 
 ## Testing
 
 ### 1 - Run Docker
 
-- `docker run --name idem-sp-local -d gitlab.dir.garr.it:4567/idem/idem-sp/<SP_IMAGE_NAME>:<SP_IMAGE_TAG>`
+- `docker run --name sp-base-local -d {{ docker_image_location }}{{ docker_image_name }}:{{ docker_image_version }}`
 
 ## Support
 

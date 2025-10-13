@@ -1,45 +1,19 @@
 ### Variables ###
 
-# Name of the Container Registry where the image is uploaded. Leave blank if unused.
-container_registry: 
+## MANDATORY VARIABLES ##
+
 # Name of the docker image
 docker_image_name: "sp.example.org"
-# Name of the SP docker image version 
-version_idem_sp: example
-# This variable is used for internal purpose. Please Ignore.
-deploy_type: example
-
-### Registry Variables
-# If you don't use a registry you can leave the "registry_" variables blank.
-# Location of your registry
-registry_location:
-# User to use to access the registry
-registry_user:
-# User's password. Please remember to use !valut to keep it safe!
-registry_password:
 
 # This is the Full Qualified Domain Name used in the Apache2 configuration
 fqdn: "sp.example.org"
-
-# This is used to customize the name of the docker container - e.g. "local" 
-location: local
 
 # These are the ports used in the Apache2 configuration, mapped in docker compose. 
 http_port: 8080
 https_port: 8443
 
-# This is the ServerAdmin in the Apache2 configuration
-server_admin: admin@example.org
-
 # The Service Provider EntityID - e.g. "https://example.org/shibboleth"
 entity_id: "https://example.org/shibboleth"
-
-# Passphrase used to decrypt the private key. In order to decrypt the private keys, they must be named:
-# sp-signing-key-aes256.pem and sp-encrypt-key-aes256.pem
-cert_passphrase:
-
-# If the Chain certificate is not included in the cert file, set also the ca_cert file name.
-ca_cert:
 
 ### Discovery Service and Metadata
 # If you need to connect one SP with only one IdP set the REMOTE_IDP_ENTITY_ID and the REMOTE_IDP_METADATA_URL variables.
@@ -50,24 +24,68 @@ ca_cert:
 # Please note that only one of the alternatives can be setted at a time.
 # Please leave blank all the unused variables.
 # If two or more alternatives are setted the priority is: EDS > WAYF > Single IdP
-remote_idp_entity_id: https://idp.example.org/idp/shibboleth
-remote_idp_metadata_url: https://idp.example.org/idp/shibboleth
+eds_enabled:
 
 wayf_url:
 
-eds_enabled:
+remote_idp_entity_id: https://idp.example.org/idp/shibboleth
+remote_idp_metadata_url: https://idp.example.org/idp/shibboleth
+
+# These variables are used to set where the SSL certificates (and private key) are. 
+# By default the certificates are on the host where the instance is running.
+ssl_cert_host_location: /opt/certs
+ssl_cert_location: /opt/certs
+
+## OPTIONAL VARIABLES ##
+
+# Name of the Container Registry where the image is uploaded. Leave blank if unused.
+docker_image_location:
+# Name of the SP docker image version 
+docker_image_version: example
+
+### Registry Variables
+# If you don't use a registry you can leave the "registry_" variables blank.
+# URL location of your registry
+registry_location:
+# User used to access the registry
+registry_user:
+# User's password. Please remember to use !valut to keep it safe!
+registry_password:
+
+# This is used to customize the name of the docker container - e.g. "local" 
+location: local
+
+# This is the ServerAdmin in the Apache2 configuration
+server_admin: admin@example.org
+
+# Passphrase used to decrypt the private keys. 
+# If you already have a pair of certificates for signing and encryption, 
+# you MUST protect them through encryption.
+# In order to decrypt the private keys, they must be named:
+# sp-signing-key-encrypted.pem and sp-encrypt-key-encrypted.pem
+cert_passphrase:
+
+# If the Chain certificate is not included in the SSL cert file, set also the ca_cert file name.
+ca_cert:
 
 # To use MDX service, set the MDX_FED_TYPE variable. 
 # Possible values: idem-test, idem, edugain.
 # More infos here: https://mdx.idem.garr.it
 mdx_fed_type:
 
-# Use only if you are part of a Feration.
-# Possible values: "IDEM Test", "IDEM and eduGAIN"
+# This variable is part of the UI (check header, index for more).
+# If you are part of IDEM/eduGAIN federation, use: "IDEM Test" or "IDEM and eduGAIN".
 federation_type:
 
-# You can push all your logs on a syslog. Insert the IP of the syslog
-node_ip_priv:
+# This is used by the docker syslog logging driver.
+# An UDP connection is used. Insert the IP of the syslog.
+# Check docker-compose.yml.j2 for more.
+syslog_ip:
 
-#This variable is used to set the Haproxy IP range for proxy protocol. Leave blank if not used.
+# This variable is used for enabling HAProxy with Proxy Protocol when setted to "prod".
+# Leave it blank if you are not using HAProxy with Proxy Protocol.
+deploy_type: example
+
+# This variable is used to define the IP range of your HAProxy instance when using the Proxy Protocol in front of the SP. 
+# Leave it blank if you are not using HAProxy with Proxy Protocol.
 haproxy_ip_range:

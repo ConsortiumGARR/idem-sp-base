@@ -76,9 +76,13 @@ ServerName "{{ .Env.SERVER_NAME }}"
          ShibRequestSetting applicationId default
       </IfModule>
 
-      # Debian/Ubuntu
-      SSLCertificateFile /etc/letsencrypt/live/{{ .Env.SERVER_NAME }}/fullchain.pem
-      SSLCertificateKeyFile /etc/letsencrypt/live/{{ .Env.SERVER_NAME }}/privkey.pem
+      {{- if (eq .Env.DEPLOY_TYPE "prod") }}
+         SSLCertificateFile  {{ .Env.SSL_CERT_LOCATION }}/live/{{ .Env.SERVER_NAME }}/fullchain.pem
+         SSLCertificateKeyFile  {{ .Env.SSL_CERT_LOCATION }}/live/{{ .Env.SERVER_NAME }}/privkey.pem
+      {{- else }}
+         SSLCertificateFile  {{ .Env.SSL_CERT_LOCATION }}/fullchain.pem
+         SSLCertificateKeyFile  {{ .Env.SSL_CERT_LOCATION }}/privkey.pem
+      {{- end }}
 
       # CA certificate if not included in SSLCertificateFile
       #SSLCACertificateFile /etc/ssl/certs/{{ .Env.CA_CERT_NAME }}.pem

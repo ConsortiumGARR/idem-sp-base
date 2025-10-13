@@ -1,0 +1,4 @@
+- name: Run service containers
+  ansible.builtin.shell: "docker compose up -d"
+  args:
+    chdir: /opt/{{ fqdn }}

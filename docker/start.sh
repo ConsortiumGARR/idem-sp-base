@@ -3,7 +3,7 @@ set -e
 
 # Templates by Gomplate
 templates=(
-    "/etc/apache2/sites-available/idem-sp.conf.template"
+    "/etc/apache2/sites-available/sp.conf.template"
     "/etc/shibboleth/shibboleth2.xml.template"
     "/var/www/html/sp/index.php.template"
     "/var/www/html/sp/shared/header.php.template"
@@ -39,16 +39,16 @@ if [ ! -f sp-signing-cert.pem ] || [ ! -f sp-encrypt-cert.pem ]; then
     shib-keygen -u _shibd -g _shibd -h "${SERVER_NAME}" -y 30 -e "https://${SERVER_NAME}/shibboleth" -n sp-signing -f
     shib-keygen -u _shibd -g _shibd -h "${SERVER_NAME}" -y 30 -e "https://${SERVER_NAME}/shibboleth" -n sp-encrypt -f
     echo "[setup][OK] Certificates generated."
-elif [ -f sp-signing-key-aes256.pem ] && [ -f sp-encrypt-key-aes256.pem ]; then
+elif [ -f sp-signing-key-encrypted.pem ] && [ -f sp-encrypt-key-encrypted.pem ]; then
     echo "[setup][INFO] Encrypted keypair found. Decrypting..."
-    openssl rsa -in "sp-signing-key-aes256.pem" --passin pass:"${CERT_PASSPHRASE}" -out "sp-signing-key.pem"
-    openssl rsa -in "sp-encrypt-key-aes256.pem" --passin pass:"${CERT_PASSPHRASE}" -out "sp-encrypt-key.pem"
-    rm "sp-signing-key-aes256.pem" "sp-encrypt-key-aes256.pem"
+    openssl rsa -in "sp-signing-key-encrypted.pem" --passin pass:"${CERT_PASSPHRASE}" -out "sp-signing-key.pem"
+    openssl rsa -in "sp-encrypt-key-encrypted.pem" --passin pass:"${CERT_PASSPHRASE}" -out "sp-encrypt-key.pem"
+    rm "sp-signing-key-encrypted.pem" "sp-encrypt-key-encrypted.pem"
     echo "[setup][OK] Keys successfully decrypted."
-elif [ -f sp-signing-key-aes256.pem ] || [ -f sp-encrypt-key-aes256.pem ]; then
+elif [ -f sp-signing-key-encrypted.pem ] || [ -f sp-encrypt-key-encrypted.pem ]; then
     echo "[setup][ERROR] Incomplete encrypted keypair detected!"
-    [ -f sp-signing-key-aes256.pem ] || echo "  - Missing: sp-signing-key-aes256.pem"
-    [ -f sp-encrypt-key-aes256.pem ] || echo "  - Missing: sp-encrypt-key-aes256.pem"
+    [ -f sp-signing-key-encrypted.pem ] || echo "  - Missing: sp-signing-key-encrypted.pem"
+    [ -f sp-encrypt-key-encrypted.pem ] || echo "  - Missing: sp-encrypt-key-encrypted.pem"
     echo "[setup] Aborting to prevent inconsistent state."
     exit 1
 else
@@ -92,8 +92,8 @@ if [ -n ${EDS_ENABLED} ] && [ "${EDS_ENABLED}" = "true" ]; then
 fi
 
 # Give to the certs the right permissions
-chown www-data:www-data -R "/etc/letsencrypt/live/${SERVER_NAME}"
-chmod 600 "/etc/letsencrypt/live/${SERVER_NAME}/privkey.pem"
+chown www-data:www-data -R "${SSL_CERT_LOCATION}"
+find "${SSL_CERT_LOCATION}" -type f -name '*privkey.pem' -exec chmod 600 {} \;
 
 # Enable the SP site configuration
 echo "[setup][INFO] Enabling Apache Shibboleth site configuration..."
@@ -102,11 +102,11 @@ ln -f -s /var/www/html/sp/shared/index.php /var/www/html/sp/secureMFA/index.php
 chown -R www-data:www-data /var/www/html/sp/secure*
 a2dissite 000-default
 a2enmod ssl headers alias include negotiation shib remoteip
-a2ensite idem-sp.conf
+a2ensite sp.conf
 
 # Permissions
 chown -R _shibd:_shibd /var/run/shibboleth /etc/shibboleth 
-chown -R www-data /etc/apache2 /etc/letsencrypt /var/log/apache2 /var/run/apache2
+chown -R www-data /etc/apache2 "${SSL_CERT_LOCATION}" /var/log/apache2 /var/run/apache2
 
 # Exec del supervisor
 echo "[setup][START] Starting supervisord..."

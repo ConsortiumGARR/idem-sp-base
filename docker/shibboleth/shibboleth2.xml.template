@@ -33,13 +33,8 @@
             You can also override entityID on /Login query string, or in RequestMap/htaccess.
             -->
             
-            <!-- WAYF or direct EntityID -->
-            {{- if .Env.REMOTE_IDP_ENTITY_ID }}
-              <!-- Direct IdP Connection -->
-              <SSO entityID="{{ .Env.REMOTE_IDP_ENTITY_ID }}">
-                SAML2
-              </SSO>
-            {{- else if and .Env.EDS_ENABLED (eq .Env.EDS_ENABLED "true") }}
+            <!-- Choose between EDS, WAYF or direct EntityID -->
+            {{- if and .Env.EDS_ENABLED (eq .Env.EDS_ENABLED "true") }}
               <!-- Embedded Discovery Service -->
               <SSO discoveryProtocol="SAMLDS" 
                    discoveryURL="https://{{ .Env.SERVER_NAME }}/shibboleth-ds/index.php">
@@ -49,6 +44,11 @@
               <!-- Central Discovery Service - WAYF -->
               <SSO discoveryProtocol="SAMLDS" 
                    discoveryURL="{{ .Env.WAYF_URL }}">
+                SAML2
+              </SSO>
+            {{- else if .Env.REMOTE_IDP_ENTITY_ID }}
+              <!-- Direct IdP Connection -->
+              <SSO entityID="{{ .Env.REMOTE_IDP_ENTITY_ID }}">
                 SAML2
               </SSO>
             {{- end }}
@@ -81,41 +81,9 @@
         also add your own attributes with values that can be plugged into the
         templates, e.g., helpLocation below.
         -->
-        <Errors supportContact="idem-help@garr.it"
+        <Errors supportContact="{{ .Env.SERVER_ADMIN }}"
             helpLocation="/about.html"
             styleSheet="/shibboleth-sp/main.css"/>
-
-  <!-- Questi esempi si potrebbero rimuovere, perché già presenti in 
-  /etc/shibboleth/example-shibboleth2.xml -->
-
-        <!-- Example of locally maintained metadata. -->
-        <!-- 
-        <MetadataProvider type="XML" validate="true" path="partner-metadata.xml"/>
-        -->
-
-        <!-- Example of remotely supplied batch of signed metadata. -->
-        <!--
-        <MetadataProvider type="XML" validate="true"
-	            url="http://federation.org/federation-metadata.xml"
-              backingFilePath="federation-metadata.xml" maxRefreshDelay="7200">
-            <MetadataFilter type="RequireValidUntil" maxValidityInterval="2419200"/>
-            <MetadataFilter type="Signature" certificate="fedsigner.pem" verifyBackup="false"/>
-            <DiscoveryFilter type="Exclude" matcher="EntityAttributes" trimTags="true" 
-              attributeName="http://macedir.org/entity-category"
-              attributeNameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri"
-              attributeValue="http://refeds.org/category/hide-from-discovery" />
-        </MetadataProvider>
-        -->
-
-        <!-- Example of remotely supplied "on-demand" signed metadata. -->
-        <!--
-        <MetadataProvider type="MDQ" validate="true" cacheDirectory="mdq"
-	            baseUrl="http://mdq.federation.org" ignoreTransport="true">
-            <MetadataFilter type="RequireValidUntil" maxValidityInterval="2419200"/>
-            <MetadataFilter type="Signature" certificate="mdqsigner.pem" />
-        </MetadataProvider>
-        -->
-    <!-- Fino a qui -->
 
         {{- if .Env.MDX_FED_TYPE }}
           <!-- MDX Service -->

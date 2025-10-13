@@ -1,6 +1,6 @@
 services:
-    idem-sp:
-        image: {{ container_registry }}{{ docker_image_name }}:{{ version_idem_sp }}
+    {{ fqdn | replace('.', '-') }}:
+        image: {{ docker_image_location }}{{ docker_image_name }}:{{ docker_image_version }}
         container_name: {{ fqdn }}-{{ location }}
         hostname: {{ fqdn }}
         env_file:
@@ -9,10 +9,10 @@ services:
             - "{{ http_port }}:80"
             - "{{ https_port }}:443"
         volumes:
-            - "/srv/idem-certbot:/etc/letsencrypt"
+            - "{{ ssl_cert_host_location }}:{{ ssl_cert_location }}"
         restart: unless-stopped
         logging:
             driver: syslog
             options:
-                syslog-address: "udp://{{ node_ip_priv }}:514"
+                syslog-address: "udp://{{ syslog_ip }}:514"
                 tag: "{{ '{{' }} .Name {{ '}}' }}"

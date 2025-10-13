@@ -1,5 +1,4 @@
 ---
-# Tasks needed to IDEM Conf Service container
 
 - name: Create needed folders
   ansible.builtin.file:
@@ -29,20 +28,20 @@
 - name: Get list of existing rsyslog configuration files
   ansible.builtin.find:
     paths: /etc/rsyslog.d/
-    patterns: "*-idem-{{ fqdn | replace('.', '-') }}.conf"
+    patterns: "*-{{ fqdn | replace('.', '-') }}.conf"
   register: rsysfile
 
 - name: Configure Docker Logs with incremented number
   ansible.builtin.template:
-    src: "idem-sp.conf.j2"
-    dest: "/etc/rsyslog.d/{{ (rsyslog_files.files | map(attribute='path') | map('basename') | map('regex_search', '^\\d+') | select('defined') | map('int') | max | default(10)) + 1 }}-idem-{{ fqdn | replace('.', '-') }}.conf"
+    src: "{{ fqdn | replace('.', '-') }}.conf.j2"
+    dest: "/etc/rsyslog.d/{{ (rsyslog_files.files | map(attribute='path') | map('basename') | map('regex_search', '^\\d+') | select('defined') | map('int') | max | default(10)) + 1 }}-{{ fqdn | replace('.', '-') }}.conf"
     mode: "0644"
   notify: "restart_rsyslog"
   when: rsysfile['matched'] == 0
 
 - name: Configure Docker Logs
   ansible.builtin.template:
-    src: "idem-sp.conf.j2"
+    src: "{{ fqdn | replace('.', '-') }}.conf.j2"
     dest: "/etc/rsyslog.d/{{ ( rsysfile.files | map(attribute='path') | map('basename') | first )}}"
     mode: "0644"
   notify: "restart_rsyslog"
@@ -56,10 +55,3 @@
   loop:
     - "docker-compose.yml"
     - ".env"
-
-- name: Run service containers
-  ansible.builtin.shell: "docker compose up -d"
-  args:
-    chdir: /opt/{{ fqdn }}
-  register: cmd_output
-  changed_when: cmd_output.rc != 0

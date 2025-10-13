@@ -33,7 +33,7 @@ RUN chown -R www-data:www-data /var/www/html/sp
 COPY --chown=www-data:www-data sp-base/docker/web /var/www/html/sp
 
 # APACHE
-COPY --chown=www-data:www-data sp-base/docker/apache2/idem-sp.conf.template /etc/apache2/sites-available/idem-sp.conf.template
+COPY --chown=www-data:www-data sp-base/docker/apache2/sp.conf.template /etc/apache2/sites-available/sp.conf.template
 
 # SHIBBOLETH
 RUN mkdir -p /var/run/shibboleth

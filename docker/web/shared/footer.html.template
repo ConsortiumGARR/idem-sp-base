@@ -11,7 +11,7 @@
       <div class="col-md-4">
         <h5 class="garr-text-warning">Contacts</h5>
         <ul class="list-unstyled">
-          <li>Email: <a href="mailto:idem-help@garr.it" class="garr-text-warning">idem-help@garr.it</a></li>
+          <li>Email: <a href="mailto:{{ .Env.SERVER_ADMIN }}" class="garr-text-warning">{{ .Env.SERVER_ADMIN }}</a></li>
         </ul>
       </div>
     </div>

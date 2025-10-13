@@ -22,24 +22,30 @@ The deployment of the service is done with Ansible.
 | Variable Name              | Example Value                        | Note |
 |----------------------------|--------------------------------------|------|
 | `docker_image_name`        | `"sp.example.org"`                   | Name of the docker image. |
-| `container_registry`       |                                      | Name of the Container Registry where the image is uploaded. Leave blank if unused. |
-| `version_idem_sp`          | `example`                            | Name of the SP docker image version. |
 | `fqdn`                     | `"sp.example.org"`                   | Full Qualified Domain Name used in the Apache2 configuration. |
-| `location`                 | `local`                              | Customizes the name of the docker container (e.g., `"local"`). |
 | `http_port`                | `8080`                               | HTTP port mapped in Docker Compose for Apache2. |
 | `https_port`               | `8443`                               | HTTPS port mapped in Docker Compose for Apache2. |
-| `server_admin`             | `admin@example.org`                  | ServerAdmin email in the Apache2 configuration. |
 | `entity_id`                | `"https://example.org/shibboleth"`   | Service Provider EntityID. |
-| `cert_passphrase`          |                                      | Passphrase to decrypt the private keys (named `sp-signing-key-aes256.pem` and `sp-encrypt-key-aes256.pem`). |
-| `ca_cert`                  |                                      | CA certificate filename (required if not included in the main cert file). |
+| `eds_enabled`              |                                      | Set to `true` to enable Shibboleth EDS (highest priority for multiple IdPs). |
+| `wayf_url`                 |                                      | WAYF service URL (e.g., `https://wayf.idem-test.garr.it/WAYF`) for multiple IdPs. |
 | `remote_idp_entity_id`     | `https://idp.example.org/idp/shibboleth` | EntityID of a single IdP. Configure only one connection method (priority: EDS > WAYF > Single IdP). |
 | `remote_idp_metadata_url`  | `https://idp.example.org/idp/shibboleth` | Metadata URL of a single IdP. |
-| `wayf_url`                 |                                      | WAYF service URL (e.g., `https://wayf.idem-test.garr.it/WAYF`) for multiple IdPs. |
-| `eds_enabled`              |                                      | Set to `true` to enable Shibboleth EDS (highest priority for multiple IdPs). |
+| `ssl_cert_host_location`   | `/opt/certs` | SSL certificates location on the host. |
+| `ssl_cert_location`        | `/opt/certs` | SSL certificates location on the instance. |
+| `docker_image_location`    |                                      | Name of the Container Registry where the image is uploaded. Leave blank if unused. |
+| `docker_image_version`     | `example`                            | Name of the SP docker image version. |
+| `registry_location`        |                                      | URL location of your registry. |
+| `registry_user`            |                                      | User used to access the registry. |
+| `registry_password`        |                                      | User's password. |
+| `location`                 | `local`                              | Customizes the name of the docker container (e.g., `"local"`). |
+| `server_admin`             | `admin@example.org`                  | ServerAdmin email in the Apache2 configuration. |
+| `cert_passphrase`          |                                      | Passphrase to decrypt the private keys (named `sp-signing-key-encrypted.pem` and `sp-encrypt-key-encrypted.pem`). |
+| `ca_cert`                  |                                      | CA certificate filename (required if not included in the main cert file). |
 | `mdx_fed_type`             |                                      | MDX federation type (e.g., `idem-test`, `idem`, `edugain`). See [MDX docs](https://mdx.idem.garr.it). |
 | `federation_type`          |                                      | Federation membership (e.g., `"IDEM Test"`, `"IDEM and eduGAIN"`). |
-| `deploy_type`              | `example`                            | Internal use only. Ignore. |
-| `node_ip_priv`             |                                      | IP address of a syslog server for log forwarding. |
+| `syslog_ip`                |                                      | IP address of a syslog server for log forwarding. |
+| `deploy_type`              | `example`                            | This variable is used for enabling HAProxy with Proxy Protocol when setted to "prod". |
+| `haproxy_ip_range`         |                                      | This variable is used to define the IP range of your HAProxy instance when using the Proxy Protocol in front of the SP.|
 
 ## Deploy
 
