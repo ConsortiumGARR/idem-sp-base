@@ -14,14 +14,14 @@ include('/var/www/html/sp/shared/header.php');
           <h2 class="garr-text-warning">Welcome!</h2>
           <p class="text-start">
             This is a test Service Provider designed for IdP administrators to verify attribute release 
-            {{- if .Env.FEDERATION_TYPE }}
-              within the {{ .Env.FEDERATION_TYPE }} federation.
+            {{- if env.Getenv "FEDERATION_TYPE" }}
+              within the {{ env.Getenv "FEDERATION_TYPE" }} federation.
             {{- end }}
             It displays a summary HTML page showing the attributes sent by the IdP in the current session.
           </p>
-          {{- if .Env.FEDERATION_TYPE }}
+          {{- if env.Getenv "FEDERATION_TYPE" }}
           <p class="text-start">
-            Please note: this service is intended for participants of the {{ .Env.FEDERATION_TYPE }} federation only.
+            Please note: this service is intended for participants of the {{ env.Getenv "FEDERATION_TYPE" }} federation only.
           </p>
           {{- end }}
         </div>
