@@ -250,7 +250,7 @@
 <body class="d-flex flex-column min-vh-100">
 
 <!-- Navbar -->
-<nav class="garr-bar p-3 mt-auto">
+<nav class="garr-bar p-3 mt-auto position-relative" id="mainNavbar">
     <div class="position-absolute start-0 top-50 translate-middle-y ps-3">
         <button data-mdb-button-init class="position-absolute start-0 top-50 translate-middle-y ps-3 navbar-toggler second-button" type="button" data-mdb-collapse-init
             data-mdb-target="#navbarToggleExternalContent10"

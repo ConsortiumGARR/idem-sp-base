@@ -14,8 +14,9 @@ RUN apt-get update && apt-get install -y \
     gzip \
     libapache2-mod-shib \
     apache2 \
+    apache2-utils \
     make \
-    ntp \
+    ntpsec \
     libapache2-mod-php \
     php \
     python3-cryptography \
