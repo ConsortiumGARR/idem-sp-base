@@ -1,7 +1,7 @@
 <?php session_start();
 
 if (isset($_SERVER['REMOTE_ADDR']) && !empty($_SERVER['REMOTE_ADDR'])) {
-    echo '<div class="container d-flex justify-content-end">
+    echo '<div class="container d-flex justify-content-end mt-3">
             <button class="btn btn-danger btn-lg shadow-sm" onclick="window.location.href=\'/Shibboleth.sso/Logout?return=https://{{ env.Getenv "SERVER_NAME" }}\'">
                 Logout
             </button>
