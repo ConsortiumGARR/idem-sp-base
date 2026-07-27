@@ -10,7 +10,7 @@
     -->
 
     <!-- The ApplicationDefaults element is where most of Shibboleth's SAML bits are defined. -->
-    <ApplicationDefaults entityID="{{ .Env.ENTITY_ID }}"
+    <ApplicationDefaults entityID="{{ env.Getenv "ENTITY_ID" }}"
         REMOTE_USER="eppn subject-id pairwise-id persistent-id"
         cipherSuites="DEFAULT:!EXP:!LOW:!aNULL:!eNULL:!DES:!IDEA:!SEED:!RC4:!3DES:!kRSA:!SSLv2:!SSLv3:!TLSv1:!TLSv1.1"
         metadataAttributePrefix="Meta-">
@@ -34,21 +34,21 @@
             -->
             
             <!-- Choose between EDS, WAYF or direct EntityID -->
-            {{- if and .Env.EDS_ENABLED (eq .Env.EDS_ENABLED "true") }}
+            {{- if and (env.Getenv "EDS_ENABLED") (eq (env.Getenv "EDS_ENABLED") "true") }}
               <!-- Embedded Discovery Service -->
               <SSO discoveryProtocol="SAMLDS" 
-                   discoveryURL="https://{{ .Env.SERVER_NAME }}/shibboleth-ds/index.php">
+                   discoveryURL="https://{{ env.Getenv "SERVER_NAME" }}/shibboleth-ds/index.php">
                 SAML2
               </SSO>
-            {{- else if .Env.WAYF_URL }}
+            {{- else if env.Getenv "WAYF_URL" }}
               <!-- Central Discovery Service - WAYF -->
               <SSO discoveryProtocol="SAMLDS" 
-                   discoveryURL="{{ .Env.WAYF_URL }}">
+                   discoveryURL="{{ env.Getenv "WAYF_URL" }}">
                 SAML2
               </SSO>
-            {{- else if .Env.REMOTE_IDP_ENTITY_ID }}
+            {{- else if env.Getenv "REMOTE_IDP_ENTITY_ID" }}
               <!-- Direct IdP Connection -->
-              <SSO entityID="{{ .Env.REMOTE_IDP_ENTITY_ID }}">
+              <SSO entityID="{{ env.Getenv "REMOTE_IDP_ENTITY_ID" }}">
                 SAML2
               </SSO>
             {{- end }}
@@ -81,23 +81,23 @@
         also add your own attributes with values that can be plugged into the
         templates, e.g., helpLocation below.
         -->
-        <Errors supportContact="{{ .Env.SERVER_ADMIN }}"
+        <Errors supportContact="{{ env.Getenv "SERVER_ADMIN" }}"
             helpLocation="/about.html"
             styleSheet="/shibboleth-sp/main.css"/>
 
-        {{- if .Env.MDX_FED_TYPE }}
+        {{- if env.Getenv "MDX_FED_TYPE" }}
           <!-- MDX Service -->
           <MetadataProvider type="MDQ" id="mdx" cacheDirectory="mdq-cache"
-                  baseUrl="https://mdx.idem.garr.it/{{ .Env.MDX_FED_TYPE }}/"            
+                  baseUrl="https://mdx.idem.garr.it/{{ env.Getenv "MDX_FED_TYPE" }}/"            
                   maxCacheDuration="172800" refreshDelayFactor="0.025" ignoreTransport="true">
               <MetadataFilter type="RequireValidUntil" maxValidityInterval="259200"/>
               <MetadataFilter type="Signature" certificate="idem-mdx-service-crt.pem"/>
           </MetadataProvider>
         {{- end }}
 
-        {{- if .Env.REMOTE_IDP_METADATA_URL }}
+        {{- if env.Getenv "REMOTE_IDP_METADATA_URL" }}
           <MetadataProvider type="XML" validate="true"
-                  url="{{ .Env.REMOTE_IDP_METADATA_URL }}"
+                  url="{{ env.Getenv "REMOTE_IDP_METADATA_URL" }}"
                   backingFilePath="idp-metadata.xml" maxRefreshDelay="7200" />
         {{- end }}
 

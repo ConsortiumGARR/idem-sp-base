@@ -20,4 +20,4 @@ The main, and only, component developed in the repository is a Shibboleth Servic
 - **Cron**: active only when the Embedded Discovery Service (EDS) is enabled. It is used to update the json file consumed by the EDS.
 - **Supervisor**: manage all the previous processes within the docker image.
 
-The Docker image is built upon the Debian:12-slim Docker image provided by Docker Hub, <https://hub.docker.com/_/debian>.
+The Docker image is built upon the Debian:13-slim Docker image provided by Docker Hub, <https://hub.docker.com/_/debian>.

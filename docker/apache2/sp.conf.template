@@ -8,24 +8,23 @@ SSLStaplingCache shmcb:/var/run/ocsp(128000)
 ServerSignature Off
 ServerTokens Prod
 
-ServerName "{{ .Env.SERVER_NAME }}"
+ServerName "{{ env.Getenv "SERVER_NAME" }}"
 
-{{- if (eq .Env.DEPLOY_TYPE "prod") }}
+{{- if (eq (env.Getenv "DEPLOY_TYPE") "prod") }}
 <IfModule mod_remoteip.c>
    RemoteIPProxyProtocol On
-   RemoteIPInternalProxy {{ .Env.HAPROXY_IP_RANGE }}
+   RemoteIPInternalProxy {{ env.Getenv "HAPROXY_IP_RANGE" }}
 </IfModule>
 {{- end }}
 
 <VirtualHost *:80>
-   Redirect permanent "/" "https://{{ .Env.SERVER_NAME }}/"
-   RedirectMatch permanent ^/(.*)$ https://{{ .Env.SERVER_NAME }}/$1
+   Redirect permanent "/" "https://{{ env.Getenv "SERVER_NAME" }}/"
+   RedirectMatch permanent ^/(.*)$ https://{{ env.Getenv "SERVER_NAME" }}/$1
 </VirtualHost>
 
 <IfModule mod_ssl.c>
    <VirtualHost _default_:443>
-      ServerName {{ .Env.SERVER_NAME }}:443
-      ServerAdmin {{ .Env.SERVER_ADMIN }}
+      ServerAdmin {{ env.Getenv "SERVER_ADMIN" }}
       
       CustomLog "|/usr/bin/logger -t [apache_access] -p local1.info" combined
       ErrorLog "|/usr/bin/logger -t [apache_error] -p local1.err"
@@ -76,16 +75,16 @@ ServerName "{{ .Env.SERVER_NAME }}"
          ShibRequestSetting applicationId default
       </IfModule>
 
-      {{- if (eq .Env.DEPLOY_TYPE "prod") }}
-         SSLCertificateFile  {{ .Env.SSL_CERT_LOCATION }}/live/{{ .Env.SERVER_NAME }}/fullchain.pem
-         SSLCertificateKeyFile  {{ .Env.SSL_CERT_LOCATION }}/live/{{ .Env.SERVER_NAME }}/privkey.pem
+      {{- if (eq (env.Getenv "DEPLOY_TYPE") "prod") }}
+         SSLCertificateFile  {{ env.Getenv "SSL_CERT_LOCATION" }}/live/{{ env.Getenv "SERVER_NAME" }}/fullchain.pem
+         SSLCertificateKeyFile  {{ env.Getenv "SSL_CERT_LOCATION" }}/live/{{ env.Getenv "SERVER_NAME" }}/privkey.pem
       {{- else }}
-         SSLCertificateFile  {{ .Env.SSL_CERT_LOCATION }}/fullchain.pem
-         SSLCertificateKeyFile  {{ .Env.SSL_CERT_LOCATION }}/privkey.pem
+         SSLCertificateFile  {{ env.Getenv "SSL_CERT_LOCATION" }}/fullchain.pem
+         SSLCertificateKeyFile  {{ env.Getenv "SSL_CERT_LOCATION" }}/privkey.pem
       {{- end }}
 
       # CA certificate if not included in SSLCertificateFile
-      #SSLCACertificateFile /etc/ssl/certs/{{ .Env.CA_CERT_NAME }}.pem
+      #SSLCACertificateFile /etc/ssl/certs/{{ env.Getenv "CA_CERT_NAME" }}.pem
 
       # Inoltro delle variabili di Shibboleth a PHP
       SetEnvIf Shib-Session-Index (.*) SHIB_SESSION_INDEX=$1
@@ -96,7 +95,7 @@ ServerName "{{ .Env.SERVER_NAME }}"
       Redirect "/shibboleth" "/Shibboleth.sso/Metadata"
 
 
-   {{- if and .Env.EDS_ENABLED (eq .Env.EDS_ENABLED "true") }}
+   {{- if and (env.Getenv "EDS_ENABLED") (eq (env.Getenv "EDS_ENABLED") "true") }}
       Alias /shibboleth-ds /etc/shibboleth-ds
       <Directory "/etc/shibboleth-ds">
          Options Indexes FollowSymLinks
@@ -107,3 +106,19 @@ ServerName "{{ .Env.SERVER_NAME }}"
 
    </VirtualHost>
 </IfModule>
+
+# Healthcheck
+Listen 8888
+
+<VirtualHost *:8888>
+
+   RewriteEngine On
+   RewriteRule ^/health$ - [R=200,L]
+
+   ErrorDocument 200 "OK"
+   CustomLog /dev/null common
+
+   <Location /health>
+      Header set Content-Type "text/plain"
+   </Location>
+</VirtualHost>

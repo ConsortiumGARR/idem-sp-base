@@ -21,7 +21,7 @@ include('/var/www/html/sp/shared/logout.php');
                     if(strpos($key, 'Meta-') === 0) {
                         // Removing prefix
                         $clean_key = substr($key, 5);
-                        echo "<tr><td><strong>{$clean_key}</strong><td class=\"cell\">" . htmlspecialchars($value) . "</td></tr>";
+                        echo "<tr><td class=\"text-break\"><strong>{$clean_key}</strong><td class=\"cell text-break\">" . htmlspecialchars($value) . "</td></tr>";
                     }
                 }
             ?>
@@ -142,7 +142,7 @@ include('/var/www/html/sp/shared/logout.php');
                     // Check if the key is a Shibboleth attribute
                     if (strpos($key, 'urn:') === 0 || array_key_exists($key, $attributeUrnMap)) {
                         $urn = $attributeUrnMap[$key] ?? "Not available"; // Get URN or default text
-                        echo "<tr><td><strong>{$key}</strong><br><small>{$urn}</small></td><td class=\"cell\">" . htmlspecialchars($value) . "</td></tr>";
+                        echo "<tr><td class=\"text-break\"><strong>{$key}</strong><br><small>{$urn}</small></td><td class=\"cell text-break\">" . htmlspecialchars($value) . "</td></tr>";
                     }
                 }
             ?>
@@ -166,7 +166,7 @@ include('/var/www/html/sp/shared/logout.php');
                 foreach ($_SERVER as $key => $value) {
                     if (strpos($key, 'Shib-') === 0) {
                         $clean_key = substr($key, 5);
-                        echo "<tr><td><strong>{$clean_key}</strong></td><td class=\"cell\">" . htmlspecialchars($value) . "</td></tr>";
+                        echo "<tr><td class=\"text-break\"><strong>{$clean_key}</strong></td><td class=\"cell text-break\">" . htmlspecialchars($value) . "</td></tr>";
                     }
                 }
 
@@ -174,7 +174,7 @@ include('/var/www/html/sp/shared/logout.php');
                 foreach ($_SERVER as $key => $value) {
                     // Check if the key is a Shibboleth attribute
                     if (!empty($value) && !array_key_exists($key, $attributeUrnMap) && !(strpos($key, 'Shib-') === 0 || strpos($key, 'Meta-') === 0)) {
-                        echo "<tr><td><strong>{$key}</strong></td><td class=\"cell\">" . htmlspecialchars($value) . "</td></tr>";
+                        echo "<tr><td class=\"text-break\"><strong>{$key}</strong></td><td class=\"cell text-break\">" . htmlspecialchars($value) . "</td></tr>";
                     }
                 }
             ?>
