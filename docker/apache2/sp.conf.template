@@ -1,29 +1,31 @@
-# OCSP Stapling, only in httpd/apache >= 2.3.3
-SSLUseStapling on
-SSLStaplingResponderTimeout 5
-SSLStaplingReturnResponderErrors off
-SSLStaplingCache shmcb:/var/run/ocsp(128000)
-
 # Remove signature and tokens
 ServerSignature Off
 ServerTokens Prod
 
 ServerName "{{ env.Getenv "SERVER_NAME" }}"
 
-{{- if (eq (env.Getenv "DEPLOY_TYPE") "prod") }}
-<IfModule mod_remoteip.c>
-   RemoteIPProxyProtocol On
-   RemoteIPInternalProxy {{ env.Getenv "HAPROXY_IP_RANGE" }}
-</IfModule>
-{{- end }}
-
 <VirtualHost *:80>
+   {{- if (eq (env.Getenv "DEPLOY_TYPE") "prod") }}
+   <IfModule mod_remoteip.c>
+      RemoteIPProxyProtocol On
+      RemoteIPInternalProxy {{ env.Getenv "HAPROXY_IP_RANGE" }}
+   </IfModule>
+   {{- end }}
+
    Redirect permanent "/" "https://{{ env.Getenv "SERVER_NAME" }}/"
    RedirectMatch permanent ^/(.*)$ https://{{ env.Getenv "SERVER_NAME" }}/$1
 </VirtualHost>
 
 <IfModule mod_ssl.c>
    <VirtualHost _default_:443>
+
+      {{- if (eq (env.Getenv "DEPLOY_TYPE") "prod") }}
+      <IfModule mod_remoteip.c>
+         RemoteIPProxyProtocol On
+         RemoteIPInternalProxy {{ env.Getenv "HAPROXY_IP_RANGE" }}
+      </IfModule>
+      {{- end }}
+
       ServerAdmin {{ env.Getenv "SERVER_ADMIN" }}
       
       CustomLog "|/usr/bin/logger -t [apache_access] -p local1.info" combined
@@ -111,14 +113,17 @@ ServerName "{{ env.Getenv "SERVER_NAME" }}"
 Listen 8888
 
 <VirtualHost *:8888>
+    DocumentRoot /var/www/html/sp
 
-   RewriteEngine On
-   RewriteRule ^/health$ - [R=200,L]
+    # Avoid logs with health checks and monitoring requests
+    SetEnvIf Request_URI  "^/health$"     is_health
+    SetEnvIf User-Agent   "^healthcheck$" is_healthcheck
+    SetEnvIfExpr "env('is_health') == '1' && env('is_healthcheck') == '1'" dontlog
+    CustomLog "|/usr/bin/logger -t [apache_access] -p local1.info" combined env=!dontlog
 
-   ErrorDocument 200 "OK"
-   CustomLog /dev/null common
+    RewriteEngine On
+    # Esenta /health dal redirect HTTPS
+    RewriteRule ^/health$ /health.txt [L]
 
-   <Location /health>
-      Header set Content-Type "text/plain"
-   </Location>
+    Header always set Content-Type text/plain
 </VirtualHost>
