@@ -15,7 +15,7 @@ RUN apt-get update && apt-get install -y \
     gzip \
     libapache2-mod-shib \
     apache2 \
-    apache2-utils \ 
+    apache2-utils \
     make \
     ntpsec \
     libapache2-mod-php \
