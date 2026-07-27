@@ -11,12 +11,131 @@
     <!-- Custom Styles -->
     <style>
         body {
-            background-color: #f8f9fa;
+            background-color: #ffffff;
         }
         .card {
             max-width: 500px;
             width: 500px;
             border-radius: 10px;
+        }
+        .navbar-dropdown {
+            position: absolute !important;
+            top: 100%;
+            left: 0;
+            width: 15%;
+            background: #1d2230;
+            z-index: 9999;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.25s ease;
+            border-radius: 0 0 6px 6px;
+        }
+        .navbar-dropdown.open {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+        .custom-offcanvas {
+            width: 15% !important;
+            margin-top: 5%;
+            height: 80%;
+        }
+        .animated-icon2 {
+            width: 30px;
+            height: 20px;
+            position: relative;
+            margin: 0px;
+            -webkit-transform: rotate(0deg);
+            -moz-transform: rotate(0deg);
+            -o-transform: rotate(0deg);
+            transform: rotate(0deg);
+            -webkit-transition: .5s ease-in-out;
+            -moz-transition: .5s ease-in-out;
+            -o-transition: .5s ease-in-out;
+            transition: .5s ease-in-out;
+            cursor: pointer;
+        }
+        .animated-icon2 span {
+            display: block;
+            position: absolute;
+            height: 3px;
+            width: 100%;
+            border-radius: 9px;
+            opacity: 1;
+            left: 0;
+            -webkit-transform: rotate(0deg);
+            -moz-transform: rotate(0deg);
+            -o-transform: rotate(0deg);
+            transform: rotate(0deg);
+            -webkit-transition: .25s ease-in-out;
+            -moz-transition: .25s ease-in-out;
+            -o-transition: .25s ease-in-out;
+            transition: .25s ease-in-out;
+        }
+        .animated-icon2 span {
+            background: #e3f2fd;
+        }
+        .animated-icon2 span:nth-child(1) {
+            top: 0px;
+        }
+        .animated-icon2 span:nth-child(2),
+        .animated-icon2 span:nth-child(3) {
+            top: 10px;
+        }
+        .animated-icon2 span:nth-child(4) {
+            top: 20px;
+        }
+        .animated-icon2.open span:nth-child(1) {
+            top: 11px;
+            width: 0%;
+            left: 50%;
+        }
+        .animated-icon2.open span:nth-child(2) {
+            -webkit-transform: rotate(45deg);
+            -moz-transform: rotate(45deg);
+            -o-transform: rotate(45deg);
+            transform: rotate(45deg);
+        }
+        .animated-icon2.open span:nth-child(3) {
+            -webkit-transform: rotate(-45deg);
+            -moz-transform: rotate(-45deg);
+            -o-transform: rotate(-45deg);
+            transform: rotate(-45deg);
+        }
+        .animated-icon2.open span:nth-child(4) {
+            top: 11px;
+            width: 0%;
+            left: 50%;
+        }
+        .hamburger-btn {
+            width: 40px;
+            height: 30px;
+            position: relative;
+            border: none;
+            background: transparent;
+        }
+        .hamburger-btn span {
+            position: absolute;
+            left: 0;
+            height: 3px;
+            width: 100%;
+            background: white;
+            transition: 0.3s;
+        }
+        .hamburger-btn span:nth-child(1) { top: 0; }
+        .hamburger-btn span:nth-child(2) { top: 13px; }
+        .hamburger-btn span:nth-child(3) { top: 26px; }
+        .hamburger-btn.open span:nth-child(1) {
+            transform: rotate(45deg);
+            top: 13px;
+        }
+        .hamburger-btn.open span:nth-child(2) {
+            opacity: 0;
+        }
+        .hamburger-btn.open span:nth-child(3) {
+            transform: rotate(-45deg);
+            top: 13px;
         }
         .garr-bar {
             background-color: #2b3145 !important;
@@ -37,7 +156,7 @@
         .menu-text {
             font-weight: bold;
         }
-    {{- if and .Env.EDS_ENABLED (eq .Env.EDS_ENABLED "true") }}
+    {{- if and (env.Getenv "EDS_ENABLED") (eq (env.Getenv "EDS_ENABLED") "true") }}
         #idpSelect form {
             max-width: 500px;
             margin: auto;
@@ -131,18 +250,27 @@
 <body class="d-flex flex-column min-vh-100">
 
 <!-- Navbar -->
-<nav class="garr-bar p-3 mt-auto">
-    {{ if or (eq .Env.FEDERATION_TYPE "IDEM and eduGAIN") (eq .Env.FEDERATION_TYPE "IDEM Test") }}
+<nav class="garr-bar p-3 mt-auto position-relative" id="mainNavbar">
+    <div class="position-absolute start-0 top-50 translate-middle-y ps-3">
+        <button data-mdb-button-init class="position-absolute start-0 top-50 translate-middle-y ps-3 navbar-toggler second-button" type="button" data-mdb-collapse-init
+            data-mdb-target="#navbarToggleExternalContent10"
+            aria-controls="navbarToggleExternalContent10" aria-expanded="false"
+            aria-label="Toggle navigation">
+            <div class="animated-icon2"><span></span><span></span><span></span><span></span></div>
+        </button>
+    </div>
+
+    {{- if or (eq (env.Getenv "FEDERATION_TYPE") "IDEM and eduGAIN") (eq (env.Getenv "FEDERATION_TYPE") "IDEM Test") }}
     <div class="container d-flex justify-content-between align-items-center">
         <a href="https://www.garr.it/it/">
             <img src="/assets/organization_white.png" class="img-fluid" style="max-height: 50px;">
         </a>
     
-        {{ if eq .Env.FEDERATION_TYPE "IDEM and eduGAIN" }}
+        {{- if eq (env.Getenv "FEDERATION_TYPE") "IDEM and eduGAIN" }}
         <a href="https://edugain.org/">
             <img src="/assets/edugain_white.png" class="img-fluid" style="max-height: 50px;">
         </a>
-        {{ else if eq .Env.FEDERATION_TYPE "IDEM Test" }}
+        {{- else if eq (env.Getenv "FEDERATION_TYPE") "IDEM Test" }}
         <div style="flex:1; text-align: center;"></div>
         {{ end }}
 
@@ -150,29 +278,43 @@
             <img src="/assets/idem_white.png" class="img-fluid" style="max-height: 50px;">
         </a>
     </div>
-    {{ end }} 
+    {{- end }}
+
+    <div id="navbarMenu" class="navbar-dropdown shadow-3">
+        <div class="p-3">
+        {{- if eq (env.Getenv "FEDERATION_TYPE") "IDEM Test" }}
+            <h4 class="mt-4 garr-text-warning">SP Test</h4>
+        {{- else if eq (env.Getenv "FEDERATION_TYPE") "IDEM and eduGAIN" }}
+            <h4 class="mt-4 garr-text-warning">SP Demo</h4>
+        {{- end }}
+            <a class="dropdown-item menu-text text-white text-wrap" style="font-size: 20px;" href='https://{{ env.Getenv "SERVER_NAME" }}/'>Home</a>
+            <h5 class="mt-4 garr-text-warning">References</h5>
+            <a class="dropdown-item menu-text text-white text-wrap" href="https://github.com/ConsortiumGARR/idem-tutorials/tree/master/idem-fedops/HOWTO-Shibboleth">HowTo - Shibboleth</a>
+            <a class="dropdown-item menu-text text-white text-wrap" href="https://mdx.idem.garr.it/en/">IDEM MDX</a>
+            <a class="dropdown-item menu-text text-white text-wrap" href="https://registry.idem.garr.it/rr3/">IDEM Registry</a>
+            <a class="dropdown-item menu-text text-white text-wrap" href="https://wiki.idem.garr.it/wiki/Profilo_Tecnico_Operativo">Profilo Tecnico Operativo (PTO)</a>
+        </div>
+    </div>
 </nav>
 
-<!-- Submenu -->
-<div class="bg-light py-2">
-  <div class="container">
-    <ul class="nav">
-      <li class="nav-item">
-        <a class="nav-link menu-text garr-text-warning" href="https://{{ .Env.SERVER_NAME }}/">Home</a>
-      </li>
-      <li class="nav-item dropdown">
-        <a class="nav-link menu-text garr-text-warning dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-          Useful Links
-        </a>
-        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-          <li><a class="dropdown-item menu-text garr-text-warning" 
-            href="https://github.com/ConsortiumGARR/idem-tutorials/tree/master/idem-fedops/HOWTO-Shibboleth">HowTo - Shibboleth</a></li>
-          <li><a class="dropdown-item menu-text garr-text-warning" href="https://mdx.idem.garr.it/en/">IDEM MDX</a></li>
-          <li><a class="dropdown-item menu-text garr-text-warning" href="https://registry.idem.garr.it/rr3/">IDEM Registry</a></li>
-          <li><a class="dropdown-item menu-text garr-text-warning" 
-            href="https://wiki.idem.garr.it/wiki/Profilo_Tecnico_Operativo">Profilo Tecnico Operativo (PTO)</a></li>
-        </ul>
-      </li>
-    </ul>
-  </div>
-</div>
+<script>
+    const btn = document.querySelector('.second-button');
+    const menu = document.getElementById('navbarMenu');
+    const icon = document.querySelector('.animated-icon2');
+
+    btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+
+        menu.classList.toggle('open');
+        icon.classList.toggle('open');
+    });
+
+    menu.addEventListener('click', (e) => {
+        e.stopPropagation();
+    });
+
+    document.addEventListener('click', () => {
+        menu.classList.remove('open');
+        icon.classList.remove('open');
+    });
+</script>
