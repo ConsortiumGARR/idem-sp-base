@@ -1,6 +1,6 @@
 <?php 
 $page_title = "Welcome to SP";
-include('/var/www/html/sp/shared/header.php'); 
+include_once '/var/www/html/sp/shared/header.php'; 
 ?>
 
 <!-- Contenuto -->
@@ -51,7 +51,7 @@ include('/var/www/html/sp/shared/header.php');
   </div>
 </main>
 
-<?php include('/var/www/html/sp/shared/footer.html'); ?>  
+<?php include_once '/var/www/html/sp/shared/footer.html'; ?>  
 
 </body>
 </html>

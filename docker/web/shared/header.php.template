@@ -151,7 +151,7 @@
             word-break: break-all;
         }
         .menu-text:hover{
-            color: #2b3145 !important;
+            color: #ffad45 !important;
         }
         .menu-text {
             font-weight: bold;
